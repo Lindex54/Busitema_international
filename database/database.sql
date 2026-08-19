@@ -1,0 +1,2 @@
+-- Busitema Internationalization database schema
+-- Tables will be added during backend development.

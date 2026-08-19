@@ -1,0 +1,2 @@
+<?php
+// Global application configuration.

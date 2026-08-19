@@ -1,0 +1,2 @@
+<?php
+// URL helper functions.

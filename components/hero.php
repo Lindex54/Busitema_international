@@ -69,20 +69,10 @@ $heroSlides = [
             >
                 <div class="hero-flow__image" style="background-image: url('<?= htmlspecialchars($imageUrl) ?>');"></div>
 
-                <?php for ($slice = 1; $slice <= 4; $slice++): ?>
-                    <div
-                        class="hero-flow__slice hero-flow__slice--<?= $slice ?>"
-                        style="background-image: url('<?= htmlspecialchars($imageUrl) ?>');"
-                        aria-hidden="true"
-                    ></div>
-                <?php endfor; ?>
-
                 <div class="hero-flow__shade" aria-hidden="true"></div>
 
                 <div class="hero-flow__content">
-                    <p class="hero-flow__eyebrow"><?= htmlspecialchars($slide['eyebrow']) ?></p>
                     <h1><?= htmlspecialchars($slide['title']) ?></h1>
-                    <p class="hero-flow__description"><?= htmlspecialchars($slide['description']) ?></p>
                     <div class="hero-flow__actions">
                         <a class="hero-flow__button hero-flow__button--primary" href="<?= htmlspecialchars($heroSiteBase . $slide['primaryUrl']) ?>">
                             <?= htmlspecialchars($slide['primaryLabel']) ?>

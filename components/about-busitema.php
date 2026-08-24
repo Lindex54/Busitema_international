@@ -1,20 +1,19 @@
 <?php
 $aboutSiteBase = $siteBase ?? '';
 $aboutFacts = [
-    ['value' => '50,257+', 'label' => 'Students'],
-    ['value' => '7', 'label' => 'Faculties'],
-    ['value' => '131', 'label' => 'Programmes'],
-    ['value' => '450+', 'label' => 'Staff'],
+    ['value' => 50257, 'suffix' => '+', 'label' => 'Students'],
+    ['value' => 7, 'suffix' => '', 'label' => 'Faculties'],
+    ['value' => 131, 'suffix' => '', 'label' => 'Programmes'],
+    ['value' => 450, 'suffix' => '+', 'label' => 'Staff'],
 ];
 ?>
 
 <section class="about-busitema" aria-labelledby="about-busitema-title">
     <div class="about-busitema__inner">
         <div class="about-busitema__content">
-            <div class="about-busitema__heading">
-                <p class="about-busitema__label">About Busitema University</p>
-                <h2 id="about-busitema-title">Education shaped by purpose and place</h2>
-            </div>
+            <header class="about-busitema__heading">
+                <h2 id="about-busitema-title">About Busitema</h2>
+            </header>
 
             <div class="about-busitema__story">
                 <p class="about-busitema__lead">
@@ -36,15 +35,14 @@ $aboutFacts = [
         </div>
 
         <div class="about-busitema__impact">
-            <header class="about-busitema__impact-header">
-                <h3>Our Impact in Numbers</h3>
-                <p>A multi-campus public university committed to practical training and impactful research.</p>
-            </header>
-
             <dl class="about-busitema__facts" aria-label="Busitema University impact in numbers">
                 <?php foreach ($aboutFacts as $fact): ?>
                     <div class="about-busitema__fact">
-                        <dt><?= htmlspecialchars($fact['value']) ?></dt>
+                        <dt
+                            data-count-up
+                            data-count-to="<?= $fact['value'] ?>"
+                            data-count-suffix="<?= htmlspecialchars($fact['suffix']) ?>"
+                        ><?= number_format($fact['value']) ?><?= htmlspecialchars($fact['suffix']) ?></dt>
                         <dd><?= htmlspecialchars($fact['label']) ?></dd>
                     </div>
                 <?php endforeach; ?>

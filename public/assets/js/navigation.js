@@ -1,6 +1,27 @@
 const navToggle = document.querySelector(".nav-toggle");
 const primaryNav = document.querySelector(".primary-nav");
 const menuTriggers = document.querySelectorAll(".primary-nav__trigger");
+const siteHeader = document.querySelector(".site-header");
+
+if (siteHeader) {
+  let scrollUpdateQueued = false;
+
+  const updateHeaderScrollState = () => {
+    siteHeader.classList.toggle("is-scrolled", window.scrollY > 12);
+    scrollUpdateQueued = false;
+  };
+
+  window.addEventListener("scroll", () => {
+    if (scrollUpdateQueued) {
+      return;
+    }
+
+    scrollUpdateQueued = true;
+    window.requestAnimationFrame(updateHeaderScrollState);
+  }, { passive: true });
+
+  updateHeaderScrollState();
+}
 
 const closeMenus = () => {
   menuTriggers.forEach((trigger) => {

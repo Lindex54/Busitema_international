@@ -23,9 +23,9 @@ $assetVersion = static function (string $relativePath): string {
     <title><?= htmlspecialchars($pageTitle) ?></title>
     <link rel="stylesheet" href="<?= htmlspecialchars($assetBase) ?>/css/tailwind.output.css">
     <link rel="stylesheet" href="<?= htmlspecialchars($assetBase) ?>/css/index.css<?= $assetVersion('css/index.css') ?>">
-    <link rel="stylesheet" href="<?= htmlspecialchars($assetBase) ?>/css/main.css">
-    <link rel="stylesheet" href="<?= htmlspecialchars($assetBase) ?>/css/components.css">
-    <link rel="stylesheet" href="<?= htmlspecialchars($assetBase) ?>/css/responsive.css">
+    <link rel="stylesheet" href="<?= htmlspecialchars($assetBase) ?>/css/main.css<?= $assetVersion('css/main.css') ?>">
+    <link rel="stylesheet" href="<?= htmlspecialchars($assetBase) ?>/css/components.css<?= $assetVersion('css/components.css') ?>">
+    <link rel="stylesheet" href="<?= htmlspecialchars($assetBase) ?>/css/responsive.css<?= $assetVersion('css/responsive.css') ?>">
     <link rel="stylesheet" href="<?= htmlspecialchars($assetBase) ?>/css/app.css<?= $assetVersion('css/app.css') ?>">
 </head>
 <body class="app">

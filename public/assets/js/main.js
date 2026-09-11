@@ -158,3 +158,35 @@
 
   stories.forEach((story) => observer.observe(story));
 })();
+
+(() => {
+  const tabs = document.querySelector("[data-partner-tabs]");
+
+  if (!tabs) {
+    return;
+  }
+
+  const buttons = [...tabs.querySelectorAll("[data-partner-tab-target]")];
+  const panels = [...tabs.querySelectorAll("[data-partner-tab-panel]")];
+
+  const activate = (index) => {
+    buttons.forEach((button) => {
+      const isActive = Number(button.dataset.partnerTabTarget) === index;
+      button.classList.toggle("is-active", isActive);
+      button.setAttribute("aria-selected", String(isActive));
+    });
+
+    panels.forEach((panel) => {
+      const isActive = Number(panel.dataset.partnerTabPanel) === index;
+      panel.classList.toggle("is-active", isActive);
+      panel.hidden = !isActive;
+    });
+  };
+
+  buttons.forEach((button) => {
+    button.addEventListener("click", () => {
+      activate(Number(button.dataset.partnerTabTarget));
+    });
+  });
+})();
+

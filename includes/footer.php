@@ -15,22 +15,22 @@
             <section class="site-footer__column" aria-labelledby="footer-study-title">
                 <h2 id="footer-study-title">Study at Busitema</h2>
                 <ul>
-                    <li><a href="<?= htmlspecialchars($footerBase) ?>/study/programmes.php">Programmes</a></li>
-                    <li><a href="<?= htmlspecialchars($footerBase) ?>/study/admissions.php">Admissions</a></li>
-                    <li><a href="<?= htmlspecialchars($footerBase) ?>/study/how-to-apply.php">How to apply</a></li>
-                    <li><a href="<?= htmlspecialchars($footerBase) ?>/study/scholarships.php">Scholarships</a></li>
-                    <li><a href="<?= htmlspecialchars($footerBase) ?>/about/campuses.php">Our campuses</a></li>
+                    <li><a href="<?= htmlspecialchars($footerBase) ?>/study/programmes">Programmes</a></li>
+                    <li><a href="<?= htmlspecialchars($footerBase) ?>/study/admissions">Admissions</a></li>
+                    <li><a href="<?= htmlspecialchars($footerBase) ?>/study/how-to-apply">How to apply</a></li>
+                    <li><a href="<?= htmlspecialchars($footerBase) ?>/study/scholarships">Scholarships</a></li>
+                    <li><a href="<?= htmlspecialchars($footerBase) ?>/about/campuses">Our campuses</a></li>
                 </ul>
             </section>
 
             <section class="site-footer__column" aria-labelledby="footer-international-title">
                 <h2 id="footer-international-title">International</h2>
                 <ul>
-                    <li><a href="<?= htmlspecialchars($footerBase) ?>/international-students/before-you-arrive.php">Before you arrive</a></li>
-                    <li><a href="<?= htmlspecialchars($footerBase) ?>/international-students/visa-immigration.php">Visa and immigration</a></li>
-                    <li><a href="<?= htmlspecialchars($footerBase) ?>/international-students/student-support.php">Student support</a></li>
+                    <li><a href="<?= htmlspecialchars($footerBase) ?>/international-students/before-you-arrive">Before you arrive</a></li>
+                    <li><a href="<?= htmlspecialchars($footerBase) ?>/international-students/visa-immigration">Visa and immigration</a></li>
+                    <li><a href="<?= htmlspecialchars($footerBase) ?>/international-students/student-support">Student support</a></li>
                     <li><a href="<?= htmlspecialchars($footerBase) ?>/mobility/">Mobility and exchange</a></li>
-                    <li><a href="<?= htmlspecialchars($footerBase) ?>/partnerships/become-a-partner.php">Become a partner</a></li>
+                    <li><a href="<?= htmlspecialchars($footerBase) ?>/partnerships/become-a-partner">Become a partner</a></li>
                 </ul>
             </section>
 

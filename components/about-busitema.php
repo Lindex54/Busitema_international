@@ -24,10 +24,10 @@ $aboutFacts = [
                 </p>
 
                 <div class="about-busitema__actions">
-                    <a class="about-busitema__button" href="<?= htmlspecialchars($aboutSiteBase) ?>/about/busitema.php">
+                    <a class="about-busitema__button" href="<?= htmlspecialchars($aboutSiteBase) ?>/about/busitema">
                         Learn more about Busitema
                     </a>
-                    <a class="about-busitema__text-link" href="<?= htmlspecialchars($aboutSiteBase) ?>/about/campuses.php">
+                    <a class="about-busitema__text-link" href="<?= htmlspecialchars($aboutSiteBase) ?>/about/campuses">
                         Explore our campuses <span aria-hidden="true">&rarr;</span>
                     </a>
                 </div>

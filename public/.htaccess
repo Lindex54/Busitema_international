@@ -1,0 +1,13 @@
+RewriteEngine On
+
+# Canonical redirect: if a visitor requests a URL ending in .php, send them
+# (301) to the same URL without the extension, so only one clean form is ever
+# indexed or linked to.
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /(.+)\.php[\s?] [NC]
+RewriteRule ^ /%1 [R=301,L]
+
+# Internal rewrite: if the requested path has no matching file/directory but
+# adding .php does, serve that file without changing the URL shown.
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^(.*)$ $1.php [L]

@@ -44,7 +44,7 @@ $leadNews = $newsItems[0];
 $supportingNews = array_slice($newsItems, 1);
 
 $articleUrl = static function (string $slug) use ($newsBase): string {
-    return $newsBase . '/news/article.php?slug=' . rawurlencode($slug);
+    return $newsBase . '/news/article?slug=' . rawurlencode($slug);
 };
 ?>
 

@@ -206,3 +206,29 @@ strong,
 b {
   font-weight: 700;
 }
+
+/* =========================================================
+   LAYOUT
+   ========================================================= */
+
+/*
+ * Tailwind's generated .container only sets max-width per breakpoint —
+ * it is not centered and has no side padding. Add both here so every
+ * page using <div class="container"> lines up like the rest of the site.
+ */
+.container {
+  margin-inline: auto;
+  padding-inline: 24px;
+}
+
+.u-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

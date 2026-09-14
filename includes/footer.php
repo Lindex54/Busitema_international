@@ -1,4 +1,25 @@
-<?php $footerBase = $siteBase ?? ''; ?>
+<?php
+$footerBase = $siteBase ?? '';
+
+require_once __DIR__ . '/../app/config/config.php';
+require_once __DIR__ . '/../app/config/database.php';
+require_once __DIR__ . '/../app/models/Setting.php';
+
+$footerOfficeDefaults = [
+    'office_address_line1' => 'Jinja - Malaba Road',
+    'office_address_line2' => 'P.O. Box 236, Tororo, Uganda',
+    'office_phone' => '+256 454 448 808',
+    'office_email' => 'vc.adm@busitema.ac.ug',
+];
+
+try {
+    $footerOffice = array_merge($footerOfficeDefaults, array_filter(Setting::all()));
+} catch (Throwable $e) {
+    $footerOffice = $footerOfficeDefaults;
+}
+
+$footerPhoneHref = preg_replace('/[^0-9+]/', '', $footerOffice['office_phone']);
+?>
 <footer class="site-footer">
     <div class="site-footer__inner">
         <div class="site-footer__identity">
@@ -37,10 +58,10 @@
             <section class="site-footer__column site-footer__contact" aria-labelledby="footer-contact-title">
                 <h2 id="footer-contact-title">Contact us</h2>
                 <address>
-                    <span>Jinja - Malaba Road</span>
-                    <span>P.O. Box 236, Tororo, Uganda</span>
-                    <a href="tel:+256454448808">+256 454 448 808</a>
-                    <a href="mailto:vc.adm@busitema.ac.ug">vc.adm@busitema.ac.ug</a>
+                    <span><?= htmlspecialchars($footerOffice['office_address_line1']) ?></span>
+                    <span><?= htmlspecialchars($footerOffice['office_address_line2']) ?></span>
+                    <a href="tel:<?= htmlspecialchars($footerPhoneHref) ?>"><?= htmlspecialchars($footerOffice['office_phone']) ?></a>
+                    <a href="mailto:<?= htmlspecialchars($footerOffice['office_email']) ?>"><?= htmlspecialchars($footerOffice['office_email']) ?></a>
                 </address>
                 <a class="site-footer__contact-link" href="<?= htmlspecialchars($footerBase) ?>/contact/">Contact details <span aria-hidden="true">&rarr;</span></a>
             </section>
@@ -49,7 +70,6 @@
                 <h2 id="footer-connect-title">Connect</h2>
                 <ul>
                     <li><a href="<?= htmlspecialchars($footerBase) ?>/news/">News and events</a></li>
-                    <li><a href="<?= htmlspecialchars($footerBase) ?>/opportunities/">Opportunities</a></li>
                     <li><a href="https://busitema.ac.ug/" target="_blank" rel="noopener noreferrer">University website</a></li>
                     <li><a href="https://x.com/BusitemaUni" target="_blank" rel="noopener noreferrer">X / Twitter</a></li>
                 </ul>

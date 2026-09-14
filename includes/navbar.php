@@ -51,7 +51,6 @@ $navItems = [
             ['label' => 'Partners', 'href' => '/partnerships/partners'],
             ['label' => 'Partnership Areas', 'href' => '/partnerships/partnership-areas'],
             ['label' => 'Become a Partner', 'href' => '/partnerships/become-a-partner'],
-            ['label' => 'Opportunities', 'href' => '/opportunities/'],
         ],
     ],
     ['label' => 'News & Events', 'href' => '/news/'],

@@ -1,23 +1,50 @@
 <?php
+require_once __DIR__ . '/../../app/config/config.php';
+require_once __DIR__ . '/../../app/config/database.php';
 require_once __DIR__ . '/../../app/helpers/functions.php';
-
-$partnerRegions = require __DIR__ . '/../../app/data/partners.php';
+require_once __DIR__ . '/../../app/helpers/seo.php';
+require_once __DIR__ . '/../../app/models/Partner.php';
 
 $requestedSlug = isset($_GET['slug']) ? (string) $_GET['slug'] : '';
-$partner = null;
-$partnerRegion = null;
 
-foreach ($partnerRegions as $region => $institutions) {
-    foreach ($institutions as $institution) {
-        if (slugify($institution['name']) === $requestedSlug) {
-            $partner = $institution;
-            $partnerRegion = $region;
-            break 2;
-        }
-    }
+try {
+    $partner = $requestedSlug !== '' ? Partner::findBySlug($requestedSlug) : null;
+} catch (Throwable $e) {
+    $partner = null;
 }
 
-$pageTitle = $partner ? $partner['name'] . ' - Busitema University Partners' : 'Partner Not Found - Busitema University';
+$partnerRegion = $partner['region'] ?? null;
+
+if ($partner) {
+    $seo = seo_meta([
+        'title' => $partner['name'] . ' - Busitema University Partners',
+        'description' => $partner['about'],
+        'image' => $partner['logo'] ? 'partners/' . $partner['logo'] : null,
+        'overrides' => $partner,
+        'canonical_path' => '/partnerships/partner?slug=' . $partner['slug'],
+        'type' => 'website',
+    ]);
+    $pageTitle = $seo['title'];
+    $pageDescription = $seo['description'];
+    $pageImage = $seo['image'];
+    $pageCanonical = $seo['canonical'];
+    $pageNoindex = $seo['noindex'];
+    $pageStructuredData = array_filter([
+        '@context' => 'https://schema.org',
+        '@type' => 'Organization',
+        'name' => $partner['name'],
+        'description' => $seo['description'],
+        'address' => $partner['country'] ? [
+            '@type' => 'PostalAddress',
+            'addressCountry' => $partner['country'],
+        ] : null,
+        'logo' => $seo['image'],
+        'url' => $seo['canonical'],
+    ], static fn ($value) => $value !== null);
+} else {
+    $pageTitle = 'Partner Not Found - Busitema University';
+    $pageNoindex = true;
+}
 
 include __DIR__ . '/../../includes/header.php';
 include __DIR__ . '/../../includes/navbar.php';
@@ -53,13 +80,15 @@ $partnerSiteBase = $siteBase ?? '';
 
                 <div class="partner-profile__layout">
                     <aside class="partner-profile__aside">
-                        <img
-                            class="partner-profile__logo"
-                            src="<?= htmlspecialchars($partnerAssetBase) ?>/images/partners/<?= htmlspecialchars($partner['logo']) ?>"
-                            alt="Emblem for <?= htmlspecialchars($partner['name']) ?>"
-                            width="96"
-                            height="96"
-                        >
+                        <?php if ($partner['logo']): ?>
+                            <img
+                                class="partner-profile__logo"
+                                src="<?= htmlspecialchars($partnerAssetBase) ?>/images/partners/<?= htmlspecialchars($partner['logo']) ?>"
+                                alt="Emblem for <?= htmlspecialchars($partner['name']) ?>"
+                                width="96"
+                                height="96"
+                            >
+                        <?php endif; ?>
                         <dl class="partner-profile__facts">
                             <div>
                                 <dt>Region</dt>
@@ -75,16 +104,6 @@ $partnerSiteBase = $siteBase ?? '';
                     <div class="partner-profile__body">
                         <h2>About</h2>
                         <p><?= htmlspecialchars($partner['about']) ?></p>
-
-                        <h2>Agreements with Busitema University</h2>
-                        <ul class="partner-profile__agreements">
-                            <?php foreach ($partner['agreements'] as $agreement): ?>
-                                <li>
-                                    <strong><?= htmlspecialchars($agreement['type']) ?></strong>
-                                    <span><?= htmlspecialchars($agreement['scope']) ?></span>
-                                </li>
-                            <?php endforeach; ?>
-                        </ul>
                     </div>
                 </div>
             </div>

@@ -1,28 +1,35 @@
 <?php
-$pageTitle = "Contact Us";
+require_once __DIR__ . '/../../app/config/config.php';
+require_once __DIR__ . '/../../app/config/database.php';
+require_once __DIR__ . '/../../app/helpers/seo.php';
+require_once __DIR__ . '/../../app/models/Setting.php';
+require_once __DIR__ . '/../../app/models/ContactPerson.php';
+
+$pageTitle = "Contact Us - Busitema University";
+$pageDescription = "Get in touch with the Busitema University Internationalization & Partnerships Office - office address, phone, email and our contact team.";
+$pageCanonical = seo_absolute_url('/contact/');
 include __DIR__ . '/../../includes/header.php';
 include __DIR__ . '/../../includes/navbar.php';
 
 $contactAssetBase = $assetBase ?? '/assets';
 
-$contactPersons = [
-    [
-        'name' => 'Grace Nabirye',
-        'role' => 'International Relations Officer',
-        'bio' => 'Guides incoming international students and partner institutions through admissions, orientation and day-to-day support.',
-        'email' => 'grace.nabirye@busitema.ac.ug',
-        'phone' => '+256 772 445 210',
-        'image' => 'grace-nabirye.svg',
-    ],
-    [
-        'name' => 'David Okwii',
-        'role' => 'Partnerships &amp; Exchange Coordinator',
-        'bio' => 'Manages exchange agreements, staff mobility and new partnership enquiries from universities and organisations abroad.',
-        'email' => 'david.okwii@busitema.ac.ug',
-        'phone' => '+256 701 998 344',
-        'image' => 'david-okwii.svg',
-    ],
+$officeDefaults = [
+    'office_address_line1' => 'Jinja - Malaba Road',
+    'office_address_line2' => 'P.O. Box 236, Tororo, Uganda',
+    'office_phone' => '+256 454 448 808',
+    'office_email' => 'vc.adm@busitema.ac.ug',
+    'office_hours' => 'Mon - Fri, 8:00am - 5:00pm',
 ];
+
+try {
+    $office = array_merge($officeDefaults, array_filter(Setting::all()));
+    $contactPersons = ContactPerson::all();
+} catch (Throwable $e) {
+    $office = $officeDefaults;
+    $contactPersons = [];
+}
+
+$officePhoneHref = preg_replace('/[^0-9+]/', '', $office['office_phone']);
 ?>
 
 <main>
@@ -43,28 +50,28 @@ $contactPersons = [
                 <span class="contact-info__icon" aria-hidden="true">&#128205;</span>
                 <div>
                     <h2>Visit us</h2>
-                    <p>Jinja &ndash; Malaba Road<br>P.O. Box 236, Tororo, Uganda</p>
+                    <p><?= htmlspecialchars($office['office_address_line1']) ?><br><?= htmlspecialchars($office['office_address_line2']) ?></p>
                 </div>
             </div>
             <div class="contact-info__item">
                 <span class="contact-info__icon" aria-hidden="true">&#128222;</span>
                 <div>
                     <h2>Call us</h2>
-                    <p><a href="tel:+256454448808">+256 454 448 808</a></p>
+                    <p><a href="tel:<?= htmlspecialchars($officePhoneHref) ?>"><?= htmlspecialchars($office['office_phone']) ?></a></p>
                 </div>
             </div>
             <div class="contact-info__item">
                 <span class="contact-info__icon" aria-hidden="true">&#9993;</span>
                 <div>
                     <h2>Email us</h2>
-                    <p><a href="mailto:vc.adm@busitema.ac.ug">vc.adm@busitema.ac.ug</a></p>
+                    <p><a href="mailto:<?= htmlspecialchars($office['office_email']) ?>"><?= htmlspecialchars($office['office_email']) ?></a></p>
                 </div>
             </div>
             <div class="contact-info__item">
                 <span class="contact-info__icon" aria-hidden="true">&#128337;</span>
                 <div>
                     <h2>Office hours</h2>
-                    <p>Mon &ndash; Fri, 8:00am &ndash; 5:00pm</p>
+                    <p><?= htmlspecialchars($office['office_hours']) ?></p>
                 </div>
             </div>
         </div>
@@ -80,35 +87,45 @@ $contactPersons = [
                 </p>
             </header>
 
-            <div class="contact-people__grid">
-                <?php foreach ($contactPersons as $person): ?>
-                    <article class="contact-card">
-                        <img
-                            class="contact-card__photo"
-                            src="<?= htmlspecialchars($contactAssetBase) ?>/images/team/<?= htmlspecialchars($person['image']) ?>"
-                            alt="Portrait of <?= htmlspecialchars($person['name']) ?>"
-                            loading="lazy"
-                            width="120"
-                            height="120"
-                        >
-                        <div class="contact-card__body">
-                            <h3><?= htmlspecialchars($person['name']) ?></h3>
-                            <p class="contact-card__role"><?= $person['role'] ?></p>
-                            <p class="contact-card__bio"><?= htmlspecialchars($person['bio']) ?></p>
-                            <ul class="contact-card__meta">
-                                <li>
-                                    <span aria-hidden="true">&#9993;</span>
-                                    <a href="mailto:<?= htmlspecialchars($person['email']) ?>"><?= htmlspecialchars($person['email']) ?></a>
-                                </li>
-                                <li>
-                                    <span aria-hidden="true">&#128222;</span>
-                                    <a href="tel:<?= htmlspecialchars(str_replace(' ', '', $person['phone'])) ?>"><?= htmlspecialchars($person['phone']) ?></a>
-                                </li>
-                            </ul>
-                        </div>
-                    </article>
-                <?php endforeach; ?>
-            </div>
+            <?php if (!$contactPersons): ?>
+                <p class="section-description">Contact details for our team will appear here shortly.</p>
+            <?php else: ?>
+                <div class="contact-people__grid">
+                    <?php foreach ($contactPersons as $person): ?>
+                        <article class="contact-card">
+                            <?php if ($person['photo']): ?>
+                                <img
+                                    class="contact-card__photo"
+                                    src="<?= htmlspecialchars($contactAssetBase) ?>/images/team/<?= htmlspecialchars($person['photo']) ?>"
+                                    alt="Portrait of <?= htmlspecialchars($person['name']) ?>"
+                                    loading="lazy"
+                                    width="120"
+                                    height="120"
+                                >
+                            <?php endif; ?>
+                            <div class="contact-card__body">
+                                <h3><?= htmlspecialchars($person['name']) ?></h3>
+                                <p class="contact-card__role"><?= htmlspecialchars($person['role']) ?></p>
+                                <?php if ($person['bio']): ?>
+                                    <p class="contact-card__bio"><?= htmlspecialchars($person['bio']) ?></p>
+                                <?php endif; ?>
+                                <ul class="contact-card__meta">
+                                    <li>
+                                        <span aria-hidden="true">&#9993;</span>
+                                        <a href="mailto:<?= htmlspecialchars($person['email']) ?>"><?= htmlspecialchars($person['email']) ?></a>
+                                    </li>
+                                    <?php if ($person['phone']): ?>
+                                        <li>
+                                            <span aria-hidden="true">&#128222;</span>
+                                            <a href="tel:<?= htmlspecialchars(preg_replace('/[^0-9+]/', '', $person['phone'])) ?>"><?= htmlspecialchars($person['phone']) ?></a>
+                                        </li>
+                                    <?php endif; ?>
+                                </ul>
+                            </div>
+                        </article>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
         </div>
     </section>
 

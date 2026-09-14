@@ -1,10 +1,23 @@
 <?php
+require_once __DIR__ . '/../../app/config/config.php';
+require_once __DIR__ . '/../../app/config/database.php';
+require_once __DIR__ . '/../../app/helpers/seo.php';
+require_once __DIR__ . '/../../app/models/ContactPerson.php';
+
 $pageTitle = "Become a Partner - Busitema University";
+$pageDescription = "Explore how your institution can become an official partner of Busitema University for student exchange, joint research and staff mobility.";
+$pageCanonical = seo_absolute_url('/partnerships/become-a-partner');
 include __DIR__ . '/../../includes/header.php';
 include __DIR__ . '/../../includes/navbar.php';
 
 $becomePartnerAssetBase = $assetBase ?? '/assets';
 $becomePartnerSiteBase = $siteBase ?? '';
+
+try {
+    $partnershipsContact = ContactPerson::findByEmail('david.okwii@busitema.ac.ug');
+} catch (Throwable $e) {
+    $partnershipsContact = null;
+}
 
 $processSteps = [
     [
@@ -99,34 +112,41 @@ $benefits = [
                 </p>
             </header>
 
-            <article class="contact-card contact-card--solo">
-                <img
-                    class="contact-card__photo"
-                    src="<?= htmlspecialchars($becomePartnerAssetBase) ?>/images/team/david-okwii.svg"
-                    alt="Portrait of David Okwii"
-                    loading="lazy"
-                    width="120"
-                    height="120"
-                >
-                <div class="contact-card__body">
-                    <h3>David Okwii</h3>
-                    <p class="contact-card__role">Partnerships &amp; Exchange Coordinator</p>
-                    <p class="contact-card__bio">
-                        Manages exchange agreements, staff mobility and new partnership enquiries from universities and
-                        organisations abroad.
-                    </p>
-                    <ul class="contact-card__meta">
-                        <li>
-                            <span aria-hidden="true">&#9993;</span>
-                            <a href="mailto:david.okwii@busitema.ac.ug">david.okwii@busitema.ac.ug</a>
-                        </li>
-                        <li>
-                            <span aria-hidden="true">&#128222;</span>
-                            <a href="tel:+256701998344">+256 701 998 344</a>
-                        </li>
-                    </ul>
-                </div>
-            </article>
+            <?php if (!$partnershipsContact): ?>
+                <p class="section-description">Contact details will appear here shortly &mdash; in the meantime, please use the general <a href="<?= htmlspecialchars($becomePartnerSiteBase . '/contact/') ?>">Contact page</a>.</p>
+            <?php else: ?>
+                <article class="contact-card contact-card--solo">
+                    <?php if ($partnershipsContact['photo']): ?>
+                        <img
+                            class="contact-card__photo"
+                            src="<?= htmlspecialchars($becomePartnerAssetBase) ?>/images/team/<?= htmlspecialchars($partnershipsContact['photo']) ?>"
+                            alt="Portrait of <?= htmlspecialchars($partnershipsContact['name']) ?>"
+                            loading="lazy"
+                            width="120"
+                            height="120"
+                        >
+                    <?php endif; ?>
+                    <div class="contact-card__body">
+                        <h3><?= htmlspecialchars($partnershipsContact['name']) ?></h3>
+                        <p class="contact-card__role"><?= htmlspecialchars($partnershipsContact['role']) ?></p>
+                        <?php if ($partnershipsContact['bio']): ?>
+                            <p class="contact-card__bio"><?= htmlspecialchars($partnershipsContact['bio']) ?></p>
+                        <?php endif; ?>
+                        <ul class="contact-card__meta">
+                            <li>
+                                <span aria-hidden="true">&#9993;</span>
+                                <a href="mailto:<?= htmlspecialchars($partnershipsContact['email']) ?>"><?= htmlspecialchars($partnershipsContact['email']) ?></a>
+                            </li>
+                            <?php if ($partnershipsContact['phone']): ?>
+                                <li>
+                                    <span aria-hidden="true">&#128222;</span>
+                                    <a href="tel:<?= htmlspecialchars(preg_replace('/[^0-9+]/', '', $partnershipsContact['phone'])) ?>"><?= htmlspecialchars($partnershipsContact['phone']) ?></a>
+                                </li>
+                            <?php endif; ?>
+                        </ul>
+                    </div>
+                </article>
+            <?php endif; ?>
         </div>
     </section>
 

@@ -1,5 +1,10 @@
 RewriteEngine On
 
+# robots.txt and sitemap.xml are generated dynamically so they always match
+# the current content and configured base URL - see robots.php / sitemap.php.
+RewriteRule ^robots\.txt$ robots.php [L]
+RewriteRule ^sitemap\.xml$ sitemap.php [L]
+
 # Canonical redirect: if a visitor requests a URL ending in .php, send them
 # (301) to the same URL without the extension, so only one clean form is ever
 # indexed or linked to.

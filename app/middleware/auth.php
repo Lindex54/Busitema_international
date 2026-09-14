@@ -41,11 +41,13 @@ if (!function_exists('logout_admin')) {
 }
 
 if (!function_exists('require_admin')) {
-    function require_admin(string $adminBase = '.'): void
+    function require_admin(): void
     {
         if (!current_admin()) {
+            require_once __DIR__ . '/../helpers/url.php';
+
             $_SESSION['redirect_after_login'] = $_SERVER['REQUEST_URI'] ?? null;
-            header('Location: ' . rtrim($adminBase, '/') . '/login');
+            header('Location: ' . resolve_project_base('/admin/') . '/admin/login');
             exit;
         }
     }

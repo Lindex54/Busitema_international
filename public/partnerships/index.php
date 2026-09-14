@@ -1,5 +1,10 @@
 <?php
+require_once __DIR__ . '/../../app/config/config.php';
+require_once __DIR__ . '/../../app/helpers/seo.php';
+
 $pageTitle = "Global Partnerships - Busitema University";
+$pageDescription = "Busitema University's international partnerships with universities and institutions worldwide, supporting student exchange, joint research and staff mobility.";
+$pageCanonical = seo_absolute_url('/partnerships/');
 include __DIR__ . '/../../includes/header.php';
 include __DIR__ . '/../../includes/navbar.php';
 

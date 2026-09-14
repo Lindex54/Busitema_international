@@ -2,11 +2,15 @@
 require_once __DIR__ . '/../app/config/config.php';
 require_once __DIR__ . '/../app/config/database.php';
 require_once __DIR__ . '/../app/helpers/security.php';
+require_once __DIR__ . '/../app/helpers/url.php';
 require_once __DIR__ . '/../app/middleware/auth.php';
 require_once __DIR__ . '/../app/models/User.php';
 
+$projectBase = resolve_project_base('/admin/');
+$adminBase = $projectBase . '/admin';
+
 if (current_admin()) {
-    header('Location: dashboard');
+    header('Location: ' . $adminBase . '/dashboard');
     exit;
 }
 
@@ -28,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             login_admin($user);
             User::touchLastLogin((int) $user['id']);
 
-            $redirectTo = $_SESSION['redirect_after_login'] ?? 'dashboard';
+            $redirectTo = $_SESSION['redirect_after_login'] ?? ($adminBase . '/dashboard');
             unset($_SESSION['redirect_after_login']);
             header('Location: ' . $redirectTo);
             exit;
@@ -39,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$adminAssetBase = '../public/assets';
+$adminAssetBase = $projectBase . '/public/assets';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -65,7 +69,7 @@ $adminAssetBase = '../public/assets';
             <p class="eyebrow">Admin Panel</p>
             <h1>Manage your site content in one place</h1>
             <p>
-                Sign in to add and update partners, news, events, opportunities and contact details &mdash;
+                Sign in to add and update partners, news, events, scholarships and contact details &mdash;
                 no coding required.
             </p>
         </div>
@@ -117,7 +121,7 @@ $adminAssetBase = '../public/assets';
                 <button class="admin-auth__submit" type="submit">Sign in</button>
             </form>
 
-            <a class="admin-auth__back" href="../public/">
+            <a class="admin-auth__back" href="<?= htmlspecialchars($projectBase . '/public/') ?>">
                 <span aria-hidden="true">&larr;</span> Back to the website
             </a>
         </div>

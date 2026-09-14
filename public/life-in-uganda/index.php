@@ -1,5 +1,6 @@
 <?php
 $pageTitle = "Life in Uganda";
+$pageNoindex = true; // placeholder page - not yet built out
 include __DIR__ . '/../../includes/header.php';
 include __DIR__ . '/../../includes/navbar.php';
 ?>

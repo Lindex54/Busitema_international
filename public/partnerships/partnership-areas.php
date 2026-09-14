@@ -1,50 +1,20 @@
 <?php
+require_once __DIR__ . '/../../app/config/config.php';
+require_once __DIR__ . '/../../app/config/database.php';
+require_once __DIR__ . '/../../app/helpers/seo.php';
+require_once __DIR__ . '/../../app/models/PartnershipArea.php';
+
 $pageTitle = "Partnership Areas - Busitema University";
+$pageDescription = "The ways Busitema University collaborates with partner institutions, including student exchange, staff mobility, joint research and more.";
+$pageCanonical = seo_absolute_url('/partnerships/partnership-areas');
 include __DIR__ . '/../../includes/header.php';
 include __DIR__ . '/../../includes/navbar.php';
 
-$partnershipAreas = [
-    [
-        'icon' => '&#127891;',
-        'title' => 'Student Exchange',
-        'description' => 'Semester and year-long exchange places for Busitema students abroad and incoming international students on our campuses.',
-    ],
-    [
-        'icon' => '&#128188;',
-        'title' => 'Staff & Faculty Mobility',
-        'description' => 'Teaching visits, research sabbaticals and training placements that strengthen academic ties between institutions.',
-    ],
-    [
-        'icon' => '&#128300;',
-        'title' => 'Joint & Collaborative Research',
-        'description' => 'Co-authored publications, shared laboratory access and joint applications for international research funding.',
-    ],
-    [
-        'icon' => '&#127942;',
-        'title' => 'Dual & Joint Degree Programmes',
-        'description' => 'Structured study pathways that lead to recognised qualifications from Busitema and a partner institution.',
-    ],
-    [
-        'icon' => '&#128218;',
-        'title' => 'Capacity Building & Training',
-        'description' => 'Short courses, workshops and professional development programmes for academic and administrative staff.',
-    ],
-    [
-        'icon' => '&#128736;',
-        'title' => 'Internships & Industrial Attachments',
-        'description' => 'Practical placements with partner organisations, giving students hands-on, real-world experience.',
-    ],
-    [
-        'icon' => '&#129309;',
-        'title' => 'Community Engagement & Outreach',
-        'description' => 'Joint community service, outreach clinics and development projects delivered alongside partner institutions.',
-    ],
-    [
-        'icon' => '&#128176;',
-        'title' => 'Grants & Resource Mobilisation',
-        'description' => 'Collaborative proposals for research grants, infrastructure development and student support funding.',
-    ],
-];
+try {
+    $partnershipAreas = PartnershipArea::all();
+} catch (Throwable $e) {
+    $partnershipAreas = [];
+}
 ?>
 
 <main>
@@ -61,15 +31,18 @@ $partnershipAreas = [
 
     <section class="section" aria-label="Areas of partnership">
         <div class="container">
-            <div class="area-grid">
-                <?php foreach ($partnershipAreas as $area): ?>
-                    <article class="area-card">
-                        <span class="area-card__icon" aria-hidden="true"><?= $area['icon'] ?></span>
-                        <h3><?= htmlspecialchars($area['title']) ?></h3>
-                        <p><?= htmlspecialchars($area['description']) ?></p>
-                    </article>
-                <?php endforeach; ?>
-            </div>
+            <?php if (!$partnershipAreas): ?>
+                <p class="section-description">Partnership areas will appear here shortly.</p>
+            <?php else: ?>
+                <div class="area-grid">
+                    <?php foreach ($partnershipAreas as $area): ?>
+                        <article class="area-card">
+                            <h3><?= htmlspecialchars($area['title']) ?></h3>
+                            <p><?= htmlspecialchars($area['description']) ?></p>
+                        </article>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
         </div>
     </section>
 

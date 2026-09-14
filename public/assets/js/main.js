@@ -190,3 +190,85 @@
   });
 })();
 
+(() => {
+  const wrap = document.querySelector("[data-opportunity-tabs]");
+
+  if (!wrap) {
+    return;
+  }
+
+  const buttons = [...wrap.querySelectorAll("[data-opportunity-filter]")];
+  const cards = [...wrap.querySelectorAll("[data-opportunity-category]")];
+  const emptyMessage = wrap.querySelector("[data-opportunity-empty]");
+
+  const applyFilter = (filter) => {
+    let visibleCount = 0;
+
+    cards.forEach((card) => {
+      const matches = filter === "all" || card.dataset.opportunityCategory === filter;
+      card.hidden = !matches;
+
+      if (matches) {
+        visibleCount += 1;
+      }
+    });
+
+    if (emptyMessage) {
+      emptyMessage.hidden = visibleCount !== 0;
+    }
+  };
+
+  buttons.forEach((button) => {
+    button.addEventListener("click", () => {
+      buttons.forEach((otherButton) => {
+        const isActive = otherButton === button;
+        otherButton.classList.toggle("is-active", isActive);
+        otherButton.setAttribute("aria-selected", String(isActive));
+      });
+
+      applyFilter(button.dataset.opportunityFilter);
+    });
+  });
+})();
+
+(() => {
+  const wrap = document.querySelector("[data-news-tabs]");
+
+  if (!wrap) {
+    return;
+  }
+
+  const buttons = [...wrap.querySelectorAll("[data-news-filter]")];
+  const cards = [...wrap.querySelectorAll("[data-news-category]")];
+  const emptyMessage = wrap.querySelector("[data-news-empty]");
+
+  const applyFilter = (filter) => {
+    let visibleCount = 0;
+
+    cards.forEach((card) => {
+      const matches = filter === "all" || card.dataset.newsCategory === filter;
+      card.hidden = !matches;
+
+      if (matches) {
+        visibleCount += 1;
+      }
+    });
+
+    if (emptyMessage) {
+      emptyMessage.hidden = visibleCount !== 0;
+    }
+  };
+
+  buttons.forEach((button) => {
+    button.addEventListener("click", () => {
+      buttons.forEach((otherButton) => {
+        const isActive = otherButton === button;
+        otherButton.classList.toggle("is-active", isActive);
+        otherButton.setAttribute("aria-selected", String(isActive));
+      });
+
+      applyFilter(button.dataset.newsFilter);
+    });
+  });
+})();
+

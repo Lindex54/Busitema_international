@@ -71,7 +71,22 @@ if (!function_exists('logout_admin')) {
 if (!function_exists('require_admin')) {
     function require_admin(): void
     {
-        if (!current_admin()) {
+        $admin = current_admin();
+
+        if ($admin && function_exists('db')) {
+            $statement = db()->prepare('SELECT is_active FROM admin_users WHERE id = ? LIMIT 1');
+            $statement->execute([(int) $admin['id']]);
+            $isActive = $statement->fetchColumn();
+
+            if ($isActive === false || (int) $isActive !== 1) {
+                logout_admin();
+                require_once __DIR__ . '/../helpers/url.php';
+                header('Location: ' . resolve_project_base('/admin/') . '/admin/login?access=1');
+                exit;
+            }
+        }
+
+        if (!$admin) {
             require_once __DIR__ . '/../helpers/url.php';
 
             $_SESSION['redirect_after_login'] = $_SERVER['REQUEST_URI'] ?? null;

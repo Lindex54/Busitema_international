@@ -35,6 +35,8 @@ $seoRobots = $seoNoindex ? 'noindex, follow' : 'index, follow';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($seoTitle) ?></title>
+    <link rel="icon" type="image/png" sizes="512x512" href="<?= htmlspecialchars($assetBase) ?>/images/icons/favicon.png<?= $assetVersion('images/icons/favicon.png') ?>">
+    <link rel="apple-touch-icon" href="<?= htmlspecialchars($assetBase) ?>/images/icons/favicon.png<?= $assetVersion('images/icons/favicon.png') ?>">
     <meta name="robots" content="<?= htmlspecialchars($seoRobots) ?>">
     <?php if ($seoDescription): ?>
         <meta name="description" content="<?= htmlspecialchars($seoDescription) ?>">

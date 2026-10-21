@@ -36,6 +36,8 @@ $admin = current_admin();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow, noarchive">
     <title><?= htmlspecialchars($pageTitle ?? 'Admin - Busitema University') ?></title>
+    <link rel="icon" type="image/png" sizes="512x512" href="<?= htmlspecialchars($adminAssetBase) ?>/images/icons/favicon.png<?= $adminAssetVersion('images/icons/favicon.png') ?>">
+    <link rel="apple-touch-icon" href="<?= htmlspecialchars($adminAssetBase) ?>/images/icons/favicon.png<?= $adminAssetVersion('images/icons/favicon.png') ?>">
     <link rel="stylesheet" href="<?= htmlspecialchars($adminAssetBase) ?>/css/index.css<?= $adminAssetVersion('css/index.css') ?>">
     <link rel="stylesheet" href="<?= htmlspecialchars($adminAssetBase) ?>/css/admin.css<?= $adminAssetVersion('css/admin.css') ?>">
 </head>

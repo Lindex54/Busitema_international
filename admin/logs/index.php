@@ -22,6 +22,8 @@ $actionLabels = [
     'admin_created' => 'Admin created',
     'admin_updated' => 'Admin updated',
     'admin_deleted' => 'Admin deleted',
+    'admin_activated' => 'Admin activated',
+    'admin_deactivated' => 'Admin deactivated',
 ];
 
 include __DIR__ . '/../includes/header.php';

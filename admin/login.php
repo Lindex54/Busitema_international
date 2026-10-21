@@ -16,7 +16,7 @@ if (current_admin()) {
 }
 
 $pageTitle = "Admin Login - Busitema University";
-$errorMessage = null;
+$errorMessage = isset($_GET['access']) ? 'Unable to log in. Check your username and password and try again.' : null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim((string) ($_POST['username'] ?? ''));
@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $password = (string) ($_POST['password'] ?? '');
         $user = $username !== '' ? User::findByUsername($username) : null;
 
-        if ($user && password_verify($password, $user['password_hash'])) {
+        if ($user && password_verify($password, $user['password_hash']) && (int) ($user['is_active'] ?? 1) === 1) {
             clear_login_throttle();
             login_admin($user);
             User::touchLastLogin((int) $user['id']);
@@ -44,8 +44,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         register_failed_login();
-        ActivityLog::record('login_failed', 'failure', $user ? (int) $user['id'] : null, $username, 'Invalid username or password');
-        $errorMessage = 'Invalid username or password.';
+        $failureDescription = $user && (int) ($user['is_active'] ?? 1) !== 1
+            ? 'Inactive administrator attempted sign-in'
+            : 'Invalid username or password';
+        ActivityLog::record('login_failed', 'failure', $user ? (int) $user['id'] : null, $username, $failureDescription);
+        $errorMessage = 'Unable to log in. Check your username and password and try again.';
     }
 }
 
@@ -63,6 +66,8 @@ $adminAssetVersion = static function (string $relativePath): string {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow, noarchive">
     <title><?= htmlspecialchars($pageTitle) ?></title>
+    <link rel="icon" type="image/png" sizes="512x512" href="<?= htmlspecialchars($adminAssetBase) ?>/images/icons/favicon.png<?= $adminAssetVersion('images/icons/favicon.png') ?>">
+    <link rel="apple-touch-icon" href="<?= htmlspecialchars($adminAssetBase) ?>/images/icons/favicon.png<?= $adminAssetVersion('images/icons/favicon.png') ?>">
     <link rel="stylesheet" href="<?= htmlspecialchars($adminAssetBase) ?>/css/index.css<?= $adminAssetVersion('css/index.css') ?>">
     <link rel="stylesheet" href="<?= htmlspecialchars($adminAssetBase) ?>/css/admin.css<?= $adminAssetVersion('css/admin.css') ?>">
 </head>

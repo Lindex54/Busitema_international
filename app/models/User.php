@@ -4,7 +4,7 @@ class User
     public static function all(): array
     {
         return db()->query(
-            'SELECT id, name, username, email, role, last_login_at, created_at, updated_at
+            'SELECT id, name, username, email, role, is_active, last_login_at, created_at, updated_at
              FROM admin_users ORDER BY name ASC, id ASC'
         )->fetchAll();
     }
@@ -13,7 +13,7 @@ class User
     {
         $limit = max(1, min($limit, 25));
         $statement = db()->prepare(
-            'SELECT id, name, username, email, role, last_login_at
+            'SELECT id, name, username, email, role, is_active, last_login_at
              FROM admin_users
              ORDER BY last_login_at IS NULL ASC, last_login_at DESC, name ASC
              LIMIT ?'
@@ -47,6 +47,12 @@ class User
     {
         $statement = db()->prepare('UPDATE admin_users SET last_login_at = NOW() WHERE id = ?');
         $statement->execute([$id]);
+    }
+
+    public static function setActive(int $id, bool $isActive): void
+    {
+        $statement = db()->prepare('UPDATE admin_users SET is_active = ? WHERE id = ?');
+        $statement->execute([$isActive ? 1 : 0, $id]);
     }
 
     public static function create(array $data): int

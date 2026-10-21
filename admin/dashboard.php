@@ -73,6 +73,7 @@ include __DIR__ . '/includes/header.php';
                         <th scope="col">Name</th>
                         <th scope="col">Username</th>
                         <th scope="col">Role</th>
+                        <th scope="col">Status</th>
                         <th scope="col">Last login</th>
                     </tr>
                 </thead>
@@ -82,6 +83,11 @@ include __DIR__ . '/includes/header.php';
                             <td><?= htmlspecialchars($recentAdmin['name']) ?></td>
                             <td><?= htmlspecialchars($recentAdmin['username']) ?></td>
                             <td><?= htmlspecialchars($recentAdmin['role'] ?: 'admin') ?></td>
+                            <td>
+                                <span class="admin-status admin-status--<?= (int) $recentAdmin['is_active'] === 1 ? 'success' : 'failure' ?>">
+                                    <?= (int) $recentAdmin['is_active'] === 1 ? 'Active' : 'Inactive' ?>
+                                </span>
+                            </td>
                             <td><?= $recentAdmin['last_login_at'] ? htmlspecialchars(date('j M Y, H:i:s', strtotime($recentAdmin['last_login_at']))) : 'Never' ?></td>
                         </tr>
                     <?php endforeach; ?>

@@ -85,7 +85,7 @@ class ActivityLog
         if ($category === 'login') {
             $where = "WHERE action IN ('login_success', 'login_failed', 'logout')";
         } elseif ($category === 'admins') {
-            $where = "WHERE action IN ('admin_created', 'admin_updated', 'admin_deleted')";
+            $where = "WHERE action IN ('admin_created', 'admin_updated', 'admin_deleted', 'admin_activated', 'admin_deactivated')";
         }
 
         return $where;

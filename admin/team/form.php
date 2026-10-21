@@ -57,7 +57,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = 'A valid email address is required.';
     }
 
-    $uploadResult = store_uploaded_image($_FILES['photo'] ?? [], $teamUploadDir);
+    $uploadResult = $errors
+        ? ['ok' => true, 'filename' => null]
+        : store_uploaded_image($_FILES['photo'] ?? [], $teamUploadDir);
 
     if (!$uploadResult['ok']) {
         $errors[] = $uploadResult['error'];
@@ -67,27 +69,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!$errors) {
         $newPhoto = $uploadResult['filename'] ?? null;
+        $oldPhoto = $person['photo'] ?? null;
 
         if ($newPhoto) {
-            $oldPhoto = $values['photo'] ?? null;
             $values['photo'] = $newPhoto;
+        }
 
-            if ($isEdit && $oldPhoto && $oldPhoto !== $newPhoto) {
-                $oldPath = $teamUploadDir . '/' . $oldPhoto;
-                if (is_file($oldPath)) {
-                    @unlink($oldPath);
-                }
+        try {
+            if ($isEdit) {
+                ContactPerson::update($id, $values);
+            } else {
+                ContactPerson::create($values);
             }
+        } catch (Throwable $exception) {
+            if ($newPhoto) {
+                remove_managed_file($teamUploadDir, $newPhoto);
+                $values['photo'] = $oldPhoto;
+            }
+            $errors[] = database_write_error($exception);
         }
 
-        if ($isEdit) {
-            ContactPerson::update($id, $values);
-            header('Location: ' . $teamAdminBase . '?updated=1');
-        } else {
-            ContactPerson::create($values);
-            header('Location: ' . $teamAdminBase . '?created=1');
+        if (!$errors) {
+            if ($newPhoto && $oldPhoto && $oldPhoto !== $newPhoto) {
+                remove_managed_file($teamUploadDir, $oldPhoto);
+            }
+
+            header('Location: ' . $teamAdminBase . ($isEdit ? '?updated=1' : '?created=1'));
+            exit;
         }
-        exit;
     }
 }
 
@@ -143,7 +152,7 @@ include __DIR__ . '/../includes/header.php';
             <label for="photo">Photo</label>
             <?php if (!empty($values['photo'])): ?>
                 <div class="admin-field__current-photo">
-                    <img src="<?= htmlspecialchars($projectBase . '/public/assets/images/team/' . $values['photo']) ?>" alt="Current photo">
+                    <img src="<?= htmlspecialchars($projectBase . '/assets/images/team/' . $values['photo']) ?>" alt="Current photo">
                     <span>Current photo &mdash; upload a new one to replace it</span>
                 </div>
             <?php endif; ?>

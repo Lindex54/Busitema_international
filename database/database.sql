@@ -1,10 +1,6 @@
--- Busitema Internationalization database schema
-
-CREATE DATABASE IF NOT EXISTS busitema_international
-    CHARACTER SET utf8mb4
-    COLLATE utf8mb4_unicode_ci;
-
-USE busitema_international;
+-- Busitema Internationalization database schema.
+-- Select the target database in phpMyAdmin before importing this file.
+-- Shared hosts normally do not permit CREATE DATABASE or USE statements.
 
 CREATE TABLE IF NOT EXISTS admin_users (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -66,7 +62,8 @@ CREATE TABLE IF NOT EXISTS partnership_areas (
     description TEXT NULL,
     sort_order INT UNSIGNED NOT NULL DEFAULT 0,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_partnership_areas_sort (sort_order, id)
 ) ENGINE=InnoDB;
 
 -- Scholarships, exchange, research grants, internships and fellowships shown
@@ -90,7 +87,9 @@ CREATE TABLE IF NOT EXISTS opportunities (
     seo_image VARCHAR(255) NULL,
     is_indexed TINYINT(1) NOT NULL DEFAULT 1,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_opportunities_listing (status, sort_order, id),
+    INDEX idx_opportunities_category (category)
 ) ENGINE=InnoDB;
 
 -- Campus cards shown on the About > About Busitema page.
@@ -105,7 +104,8 @@ CREATE TABLE IF NOT EXISTS campuses (
     is_new TINYINT(1) NOT NULL DEFAULT 0,
     sort_order INT UNSIGNED NOT NULL DEFAULT 0,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_campuses_sort (sort_order, id)
 ) ENGINE=InnoDB;
 
 -- News & Events published by the Internationalization Office (separate from the
@@ -129,7 +129,9 @@ CREATE TABLE IF NOT EXISTS news (
     seo_image VARCHAR(255) NULL,
     is_indexed TINYINT(1) NOT NULL DEFAULT 1,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_news_listing (published_at, sort_order, id),
+    INDEX idx_news_events (type, event_date)
 ) ENGINE=InnoDB;
 
 -- Homepage hero slider slides.
@@ -145,5 +147,6 @@ CREATE TABLE IF NOT EXISTS hero_slides (
     secondary_url VARCHAR(255) NULL,
     sort_order INT UNSIGNED NOT NULL DEFAULT 0,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_hero_slides_sort (sort_order, id)
 ) ENGINE=InnoDB;

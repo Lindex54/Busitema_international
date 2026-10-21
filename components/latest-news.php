@@ -7,7 +7,7 @@ $newsItems = [
         'date' => '18 August 2026',
         'title' => 'Busitema expands international research collaboration',
         'summary' => 'A new academic partnership opens pathways for joint research, staff exchange and practical learning across institutions.',
-        'image' => 'international-partnership-signing.png',
+        'image' => 'international-partnership-signing.jpg',
         'alt' => 'University leaders signing an international academic partnership agreement',
         'slug' => 'international-research-collaboration',
     ],
@@ -16,7 +16,7 @@ $newsItems = [
         'date' => '14 August 2026',
         'title' => 'Student innovators present practical solutions for agriculture',
         'summary' => 'Engineering students demonstrated locally built technologies designed to support efficient and climate-aware farming.',
-        'image' => 'student-innovation-showcase.png',
+        'image' => 'student-innovation-showcase.jpg',
         'alt' => 'Students presenting a solar-powered agricultural innovation',
         'slug' => 'student-agriculture-innovation',
     ],
@@ -25,7 +25,7 @@ $newsItems = [
         'date' => '9 August 2026',
         'title' => 'International students begin their Busitema experience',
         'summary' => 'New exchange students met campus ambassadors and discovered the academic and cultural life awaiting them in Uganda.',
-        'image' => 'international-student-orientation.png',
+        'image' => 'international-student-orientation.jpg',
         'alt' => 'International students walking through campus during orientation',
         'slug' => 'international-student-orientation',
     ],
@@ -34,7 +34,7 @@ $newsItems = [
         'date' => '2 August 2026',
         'title' => 'Researchers work with farmers on climate-smart agriculture',
         'summary' => 'Field teams are combining scientific evidence and community knowledge to strengthen resilient food systems.',
-        'image' => 'climate-smart-field-research.png',
+        'image' => 'climate-smart-field-research.jpg',
         'alt' => 'Researchers and a local farmer conducting agricultural fieldwork',
         'slug' => 'climate-smart-agriculture-research',
     ],
@@ -66,6 +66,8 @@ $articleUrl = static function (string $slug) use ($newsBase): string {
                     <img
                         src="<?= htmlspecialchars($newsAssetBase) ?>/images/news/<?= htmlspecialchars($leadNews['image']) ?>"
                         alt="<?= htmlspecialchars($leadNews['alt']) ?>"
+                        width="1536"
+                        height="1024"
                         loading="lazy"
                     >
                 </a>
@@ -91,6 +93,8 @@ $articleUrl = static function (string $slug) use ($newsBase): string {
                             <img
                                 src="<?= htmlspecialchars($newsAssetBase) ?>/images/news/<?= htmlspecialchars($item['image']) ?>"
                                 alt="<?= htmlspecialchars($item['alt']) ?>"
+                                width="1536"
+                                height="1024"
                                 loading="lazy"
                             >
                         </a>

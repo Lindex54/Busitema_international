@@ -33,8 +33,27 @@ class Setting
 
     public static function setMany(array $values): void
     {
-        foreach ($values as $key => $value) {
-            self::set($key, $value);
+        $connection = db();
+        $startedTransaction = !$connection->inTransaction();
+
+        if ($startedTransaction) {
+            $connection->beginTransaction();
+        }
+
+        try {
+            foreach ($values as $key => $value) {
+                self::set($key, $value);
+            }
+
+            if ($startedTransaction) {
+                $connection->commit();
+            }
+        } catch (Throwable $exception) {
+            if ($startedTransaction && $connection->inTransaction()) {
+                $connection->rollBack();
+            }
+
+            throw $exception;
         }
     }
 }

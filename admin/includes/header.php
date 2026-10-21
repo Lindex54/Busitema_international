@@ -6,7 +6,12 @@ require_once __DIR__ . '/../../app/helpers/url.php';
 
 $adminProjectBase = resolve_project_base('/admin/');
 $adminBase = $adminProjectBase . '/admin';
-$adminAssetBase = $adminProjectBase . '/public/assets';
+$adminAssetBase = $adminProjectBase . '/assets';
+$adminAssetVersion = static function (string $relativePath): string {
+    $assetPath = __DIR__ . '/../../public/assets/' . ltrim($relativePath, '/');
+
+    return is_file($assetPath) ? '?v=' . filemtime($assetPath) : '';
+};
 
 $adminNav = [
     ['label' => 'Dashboard', 'href' => '/dashboard'],
@@ -27,9 +32,10 @@ $admin = current_admin();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow, noarchive">
     <title><?= htmlspecialchars($pageTitle ?? 'Admin - Busitema University') ?></title>
-    <link rel="stylesheet" href="<?= htmlspecialchars($adminAssetBase) ?>/css/index.css">
-    <link rel="stylesheet" href="<?= htmlspecialchars($adminAssetBase) ?>/css/admin.css">
+    <link rel="stylesheet" href="<?= htmlspecialchars($adminAssetBase) ?>/css/index.css<?= $adminAssetVersion('css/index.css') ?>">
+    <link rel="stylesheet" href="<?= htmlspecialchars($adminAssetBase) ?>/css/admin.css<?= $adminAssetVersion('css/admin.css') ?>">
 </head>
 <body class="app">
 
@@ -62,6 +68,7 @@ $admin = current_admin();
             <div class="admin-shell__user">
                 <span><?= htmlspecialchars($admin['name'] ?? '') ?></span>
                 <form method="post" action="<?= htmlspecialchars($adminBase . '/logout') ?>">
+                    <?= csrf_field() ?>
                     <button class="admin-shell__logout" type="submit">Log out</button>
                 </form>
             </div>

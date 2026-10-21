@@ -64,6 +64,7 @@ if ($newsItem) {
         ], static fn ($value) => $value !== null);
     }
 } else {
+    http_response_code(404);
     $pageTitle = 'Story Not Found - Busitema University';
     $pageNoindex = true;
 }
@@ -142,7 +143,7 @@ $formatDate = static function (?string $date): string {
                         <?php if (!empty($newsItem['image'])): ?>
                             <img
                                 class="office-news-article__image"
-                                src="<?= htmlspecialchars($newsAssetBase) ?>/images/<?= htmlspecialchars($newsItem['image']) ?>"
+                                src="<?= htmlspecialchars($newsAssetBase) ?>/images/<?= htmlspecialchars(optimized_image_path($newsItem['image'])) ?>"
                                 alt="<?= htmlspecialchars($newsItem['title']) ?>"
                             >
                         <?php endif; ?>

@@ -75,16 +75,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (!$errors) {
-        $values['slug'] = Opportunity::uniqueSlug($values['title'], $isEdit ? $id : null);
+        try {
+            $values['slug'] = Opportunity::uniqueSlug($values['title'], $isEdit ? $id : null);
 
-        if ($isEdit) {
-            Opportunity::update($id, $values);
-            header('Location: ' . $opportunitiesAdminBase . '?updated=1');
-        } else {
-            Opportunity::create($values);
-            header('Location: ' . $opportunitiesAdminBase . '?created=1');
+            if ($isEdit) {
+                Opportunity::update($id, $values);
+            } else {
+                Opportunity::create($values);
+            }
+        } catch (Throwable $exception) {
+            $errors[] = database_write_error($exception);
         }
-        exit;
+
+        if (!$errors) {
+            header('Location: ' . $opportunitiesAdminBase . ($isEdit ? '?updated=1' : '?created=1'));
+            exit;
+        }
     }
 }
 

@@ -49,28 +49,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Default social image is optional - only validated/uploaded if a file was chosen.
-    $seoImageUpload = store_uploaded_image($_FILES['seo_default_image'] ?? [], $seoUploadDir);
+    $seoImageUpload = $errors
+        ? ['ok' => true, 'filename' => null]
+        : store_uploaded_image($_FILES['seo_default_image'] ?? [], $seoUploadDir);
 
     if (!$seoImageUpload['ok']) {
         $errors[] = $seoImageUpload['error'];
     }
 
     if (!$errors) {
-        if (!empty($seoImageUpload['filename'])) {
-            $oldImage = $values['seo_default_image'] ?? '';
-            $values['seo_default_image'] = 'seo/' . $seoImageUpload['filename'];
+        $newImage = $seoImageUpload['filename'] ?? null;
+        $oldImage = $values['seo_default_image'] ?? '';
 
-            if ($oldImage && $oldImage !== $values['seo_default_image']) {
-                $oldPath = __DIR__ . '/../../public/assets/images/' . $oldImage;
-                if (is_file($oldPath)) {
-                    @unlink($oldPath);
-                }
-            }
+        if ($newImage) {
+            $values['seo_default_image'] = 'seo/' . $newImage;
         }
 
-        Setting::setMany($values);
-        header('Location: ' . $settingsAdminBase . '?updated=1');
-        exit;
+        try {
+            Setting::setMany($values);
+        } catch (Throwable $exception) {
+            if ($newImage) {
+                remove_managed_file($seoUploadDir, $newImage);
+                $values['seo_default_image'] = $oldImage;
+            }
+            $errors[] = database_write_error($exception);
+        }
+
+        if (!$errors) {
+            if ($newImage && $oldImage && $oldImage !== $values['seo_default_image']) {
+                remove_managed_file(__DIR__ . '/../../public/assets/images', $oldImage);
+            }
+
+            header('Location: ' . $settingsAdminBase . '?updated=1');
+            exit;
+        }
     }
 }
 
@@ -133,7 +145,7 @@ include __DIR__ . '/../includes/header.php';
             <label for="seo_default_image">Default picture for sharing</label>
             <?php if (!empty($values['seo_default_image'])): ?>
                 <div class="admin-field__current-photo">
-                    <img src="<?= htmlspecialchars($projectBase . '/public/assets/images/' . $values['seo_default_image']) ?>" alt="Current default picture">
+                    <img src="<?= htmlspecialchars($projectBase . '/assets/images/' . $values['seo_default_image']) ?>" alt="Current default picture">
                     <span>Current picture &mdash; upload a new one to replace it</span>
                 </div>
             <?php endif; ?>

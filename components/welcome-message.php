@@ -18,8 +18,10 @@ $welcomeSiteBase = $siteBase ?? '';
         <div class="welcome-message__body">
             <figure class="welcome-message__media">
                 <img
-                    src="<?= htmlspecialchars($welcomeAssetBase) ?>/images/hero/hero-life-uganda.png"
+                    src="<?= htmlspecialchars($welcomeAssetBase) ?>/images/hero/hero-life-uganda.jpg"
                     alt="Busitema University students sharing time together on campus"
+                    width="1672"
+                    height="941"
                     loading="lazy"
                 >
                 <figcaption class="welcome-message__location">

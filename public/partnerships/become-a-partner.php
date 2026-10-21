@@ -119,7 +119,7 @@ $benefits = [
                     <?php if ($partnershipsContact['photo']): ?>
                         <img
                             class="contact-card__photo"
-                            src="<?= htmlspecialchars($becomePartnerAssetBase) ?>/images/team/<?= htmlspecialchars($partnershipsContact['photo']) ?>"
+                            src="<?= htmlspecialchars($becomePartnerAssetBase) ?>/images/<?= htmlspecialchars(optimized_image_path('team/' . $partnershipsContact['photo'])) ?>"
                             alt="Portrait of <?= htmlspecialchars($partnershipsContact['name']) ?>"
                             loading="lazy"
                             width="120"

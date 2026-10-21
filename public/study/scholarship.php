@@ -30,6 +30,7 @@ if ($opportunity) {
     $pageCanonical = $seo['canonical'];
     $pageNoindex = $seo['noindex'];
 } else {
+    http_response_code(404);
     $pageTitle = 'Opportunity Not Found - Busitema University';
     $pageNoindex = true;
 }

@@ -77,37 +77,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Image is optional - only validated/uploaded if a file was actually chosen.
-    $uploadResult = store_uploaded_image($_FILES['image'] ?? [], $newsUploadDir);
+    $uploadResult = $errors
+        ? ['ok' => true, 'filename' => null]
+        : store_uploaded_image($_FILES['image'] ?? [], $newsUploadDir);
 
     if (!$uploadResult['ok']) {
         $errors[] = $uploadResult['error'];
     }
 
     if (!$errors) {
-        $values['slug'] = News::uniqueSlug($values['title'], $isEdit ? $id : null);
-
         $newImage = $uploadResult['filename'] ?? null;
+        $oldImage = $item['image'] ?? null;
 
         if ($newImage) {
-            $oldImage = $values['image'] ?? null;
             $values['image'] = 'news/' . $newImage;
+        }
 
-            if ($isEdit && $oldImage && $oldImage !== $values['image']) {
-                $oldPath = __DIR__ . '/../../public/assets/images/' . $oldImage;
-                if (is_file($oldPath)) {
-                    @unlink($oldPath);
-                }
+        try {
+            $values['slug'] = News::uniqueSlug($values['title'], $isEdit ? $id : null);
+
+            if ($isEdit) {
+                News::update($id, $values);
+            } else {
+                News::create($values);
             }
+        } catch (Throwable $exception) {
+            if ($newImage) {
+                remove_managed_file($newsUploadDir, $newImage);
+                $values['image'] = $oldImage;
+            }
+            $errors[] = database_write_error($exception);
         }
 
-        if ($isEdit) {
-            News::update($id, $values);
-            header('Location: ' . $newsAdminBase . '?updated=1');
-        } else {
-            News::create($values);
-            header('Location: ' . $newsAdminBase . '?created=1');
+        if (!$errors) {
+            if ($newImage && $oldImage && $oldImage !== $values['image']) {
+                remove_managed_file(__DIR__ . '/../../public/assets/images', $oldImage);
+            }
+
+            header('Location: ' . $newsAdminBase . ($isEdit ? '?updated=1' : '?created=1'));
+            exit;
         }
-        exit;
     }
 }
 
@@ -176,7 +185,7 @@ include __DIR__ . '/../includes/header.php';
             <label for="image">Image</label>
             <?php if (!empty($values['image'])): ?>
                 <div class="admin-field__current-photo">
-                    <img src="<?= htmlspecialchars($projectBase . '/public/assets/images/' . $values['image']) ?>" alt="Current image">
+                    <img src="<?= htmlspecialchars($projectBase . '/assets/images/' . $values['image']) ?>" alt="Current image">
                     <span>Current image &mdash; upload a new one to replace it</span>
                 </div>
             <?php endif; ?>

@@ -9,7 +9,7 @@ require_once __DIR__ . '/../../app/models/ContactPerson.php';
 require_admin();
 
 $projectBase = resolve_project_base('/admin/');
-$teamAssetBase = $projectBase . '/public/assets';
+$teamAssetBase = $projectBase . '/assets';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'delete') {
     if (csrf_verify($_POST['csrf_token'] ?? null)) {

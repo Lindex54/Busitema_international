@@ -46,7 +46,7 @@ $officeNewsFormatDate = static function (?string $date): string {
                     <?php if (!empty($item['image'])): ?>
                         <a class="office-news-teaser__image" href="<?= htmlspecialchars($officeNewsArticleUrl($item['slug'])) ?>">
                             <img
-                                src="<?= htmlspecialchars($officeNewsAssetBase) ?>/images/<?= htmlspecialchars($item['image']) ?>"
+                                src="<?= htmlspecialchars($officeNewsAssetBase) ?>/images/<?= htmlspecialchars(optimized_image_path($item['image'])) ?>"
                                 alt="<?= htmlspecialchars($item['title']) ?>"
                                 loading="lazy"
                             >

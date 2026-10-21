@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Starter project structure for the frontend-first PHP website.",
   "scripts": {
-    "build:css": "tailwindcss -i ./public/assets/css/tailwind.css -o ./public/assets/css/tailwind.output.css",
+    "build:css": "tailwindcss -i ./public/assets/css/tailwind.css -o ./public/assets/css/tailwind.output.css --minify",
     "watch:css": "tailwindcss -i ./public/assets/css/tailwind.css -o ./public/assets/css/tailwind.output.css --watch"
   },
   "keywords": [],

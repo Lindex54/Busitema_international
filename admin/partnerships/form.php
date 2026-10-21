@@ -64,37 +64,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Logo is optional - only validated/uploaded if a file was actually chosen.
-    $uploadResult = store_uploaded_image($_FILES['logo'] ?? [], $partnerUploadDir);
+    $uploadResult = $errors
+        ? ['ok' => true, 'filename' => null]
+        : store_uploaded_image($_FILES['logo'] ?? [], $partnerUploadDir);
 
     if (!$uploadResult['ok']) {
         $errors[] = $uploadResult['error'];
     }
 
     if (!$errors) {
-        $values['slug'] = Partner::uniqueSlug($values['name'], $isEdit ? $id : null);
-
         $newLogo = $uploadResult['filename'] ?? null;
+        $oldLogo = $partner['logo'] ?? null;
 
         if ($newLogo) {
-            $oldLogo = $values['logo'] ?? null;
             $values['logo'] = $newLogo;
+        }
 
-            if ($isEdit && $oldLogo && $oldLogo !== $newLogo) {
-                $oldPath = $partnerUploadDir . '/' . $oldLogo;
-                if (is_file($oldPath)) {
-                    @unlink($oldPath);
-                }
+        try {
+            $values['slug'] = Partner::uniqueSlug($values['name'], $isEdit ? $id : null);
+
+            if ($isEdit) {
+                Partner::update($id, $values);
+            } else {
+                Partner::create($values);
             }
+        } catch (Throwable $exception) {
+            if ($newLogo) {
+                remove_managed_file($partnerUploadDir, $newLogo);
+                $values['logo'] = $oldLogo;
+            }
+            $errors[] = database_write_error($exception);
         }
 
-        if ($isEdit) {
-            Partner::update($id, $values);
-            header('Location: ' . $partnersAdminBase . '?updated=1');
-        } else {
-            Partner::create($values);
-            header('Location: ' . $partnersAdminBase . '?created=1');
+        if (!$errors) {
+            if ($newLogo && $oldLogo && $oldLogo !== $newLogo) {
+                remove_managed_file($partnerUploadDir, $oldLogo);
+            }
+
+            header('Location: ' . $partnersAdminBase . ($isEdit ? '?updated=1' : '?created=1'));
+            exit;
         }
-        exit;
     }
 }
 
@@ -153,7 +162,7 @@ include __DIR__ . '/../includes/header.php';
             <label for="logo">Logo</label>
             <?php if (!empty($values['logo'])): ?>
                 <div class="admin-field__current-photo">
-                    <img src="<?= htmlspecialchars($projectBase . '/public/assets/images/partners/' . $values['logo']) ?>" alt="Current logo">
+                    <img src="<?= htmlspecialchars($projectBase . '/assets/images/partners/' . $values['logo']) ?>" alt="Current logo">
                     <span>Current logo &mdash; upload a new one to replace it</span>
                 </div>
             <?php endif; ?>

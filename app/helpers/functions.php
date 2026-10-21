@@ -39,6 +39,16 @@ if (!function_exists('store_uploaded_image')) {
             return ['ok' => false, 'error' => 'The uploaded file is not a valid image.'];
         }
 
+        $expectedExtension = [
+            'image/jpeg' => ['jpg', 'jpeg'],
+            'image/png' => ['png'],
+            'image/webp' => ['webp'],
+        ][$mimeType];
+
+        if (!in_array($extension, $expectedExtension, true) || @getimagesize($file['tmp_name']) === false) {
+            return ['ok' => false, 'error' => 'The image contents do not match the file extension.'];
+        }
+
         if (!is_dir($destDir) && !mkdir($destDir, 0755, true) && !is_dir($destDir)) {
             return ['ok' => false, 'error' => 'Could not prepare the upload folder.'];
         }
@@ -51,5 +61,47 @@ if (!function_exists('store_uploaded_image')) {
         }
 
         return ['ok' => true, 'filename' => $filename];
+    }
+}
+
+if (!function_exists('remove_managed_file')) {
+    // Removes only a regular file contained by the explicitly supplied base
+    // directory. Stored database paths are never trusted as filesystem paths.
+    function remove_managed_file(string $baseDir, ?string $relativePath): bool
+    {
+        $relativePath = str_replace('\\', '/', trim((string) $relativePath));
+
+        if ($relativePath === '' || str_contains($relativePath, "\0") || preg_match('#(^|/)\.\.(/|$)#', $relativePath)) {
+            return false;
+        }
+
+        $baseReal = realpath($baseDir);
+        $fileReal = realpath(rtrim($baseDir, '/\\') . DIRECTORY_SEPARATOR . ltrim($relativePath, '/'));
+
+        if ($baseReal === false || $fileReal === false || !is_file($fileReal)) {
+            return false;
+        }
+
+        $basePrefix = rtrim(str_replace('\\', '/', $baseReal), '/') . '/';
+        $normalizedFile = str_replace('\\', '/', $fileReal);
+
+        return str_starts_with($normalizedFile, $basePrefix) && @unlink($fileReal);
+    }
+}
+
+if (!function_exists('database_write_error')) {
+    function database_write_error(Throwable $exception): string
+    {
+        error_log(sprintf(
+            'Admin database write failed [%s]: %s',
+            $exception->getCode(),
+            $exception->getMessage()
+        ));
+
+        if ($exception instanceof PDOException && (string) $exception->getCode() === '23000') {
+            return 'That value is already in use. Please change the unique name or email and try again.';
+        }
+
+        return 'The changes could not be saved. Please check the database connection and try again.';
     }
 }

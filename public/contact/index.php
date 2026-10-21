@@ -96,7 +96,7 @@ $officePhoneHref = preg_replace('/[^0-9+]/', '', $office['office_phone']);
                             <?php if ($person['photo']): ?>
                                 <img
                                     class="contact-card__photo"
-                                    src="<?= htmlspecialchars($contactAssetBase) ?>/images/team/<?= htmlspecialchars($person['photo']) ?>"
+                                    src="<?= htmlspecialchars($contactAssetBase) ?>/images/<?= htmlspecialchars(optimized_image_path('team/' . $person['photo'])) ?>"
                                     alt="Portrait of <?= htmlspecialchars($person['name']) ?>"
                                     loading="lazy"
                                     width="120"

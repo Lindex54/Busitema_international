@@ -65,6 +65,8 @@ $navItems = [
                 class="brand__logo"
                 src="<?= htmlspecialchars(($assetBase ?? '/assets') . '/images/icons/Busitema_University_Logo.png') ?>"
                 alt="Busitema University"
+                width="828"
+                height="301"
             >
             <span class="brand__text">
                 <span class="brand__name">Busitema</span>

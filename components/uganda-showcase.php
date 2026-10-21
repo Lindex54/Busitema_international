@@ -4,37 +4,37 @@ $ugandaStories = [
     [
         'title' => 'Community',
         'description' => 'Learning here reaches beyond lecture rooms. Students work alongside local communities, sharing knowledge and building practical solutions together.',
-        'image' => 'community-outreach.png',
+        'image' => 'community-outreach.jpg',
         'alt' => 'Students and community members working together in a garden',
     ],
     [
         'title' => 'Climate & Geography',
         'description' => 'Eastern Uganda brings together fertile farmland, warm tropical weather, dramatic rock formations and the highlands surrounding Mount Elgon.',
-        'image' => 'climate-geography.png',
+        'image' => 'climate-geography.jpg',
         'alt' => 'Green Eastern Ugandan landscape with farmland and distant mountains',
     ],
     [
         'title' => 'Diversity',
         'description' => 'Busitema connects Ugandan and international students through everyday campus life, shared study and friendships that cross borders.',
-        'image' => 'student-diversity.png',
+        'image' => 'student-diversity.jpg',
         'alt' => 'Students from different backgrounds walking together on campus',
     ],
     [
         'title' => 'Culture',
         'description' => 'Music, dance, language and community gatherings offer meaningful ways to understand the living cultures of Eastern Uganda.',
-        'image' => 'culture.png',
+        'image' => 'culture.jpg',
         'alt' => 'Community members sharing music and dance at a cultural gathering',
     ],
     [
         'title' => 'Food',
         'description' => 'Local meals bring people together through matooke, groundnut sauce, fresh greens, beans, fish and the generosity of shared plates.',
-        'image' => 'ugandan-food.png',
+        'image' => 'ugandan-food.jpg',
         'alt' => 'A shared table of Ugandan dishes including matooke, beans, greens and fish',
     ],
     [
         'title' => 'Hospitality',
         'description' => 'Hospitality is part of daily life: time offered freely, conversations over tea and practical support as newcomers settle into Uganda.',
-        'image' => 'hospitality.png',
+        'image' => 'hospitality.jpg',
         'alt' => 'A Ugandan host welcoming international visitors with tea',
     ],
 ];
@@ -74,6 +74,8 @@ $ugandaStories = [
                     <img
                         src="<?= htmlspecialchars($ugandaAssetBase) ?>/images/uganda/<?= htmlspecialchars($story['image']) ?>"
                         alt="<?= htmlspecialchars($story['alt']) ?>"
+                        width="1536"
+                        height="1024"
                         loading="lazy"
                     >
                     <figcaption>

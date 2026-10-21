@@ -3,6 +3,7 @@ require_once __DIR__ . '/../../app/config/config.php';
 require_once __DIR__ . '/../../app/config/database.php';
 require_once __DIR__ . '/../../app/helpers/security.php';
 require_once __DIR__ . '/../../app/helpers/url.php';
+require_once __DIR__ . '/../../app/helpers/functions.php';
 require_once __DIR__ . '/../../app/middleware/auth.php';
 require_once __DIR__ . '/../../app/models/Campus.php';
 
@@ -62,19 +63,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = 'Description is required.';
     }
 
-    if ($values['link'] !== '' && !filter_var($values['link'], FILTER_VALIDATE_URL)) {
-        $errors[] = 'Link must be a valid URL (e.g. https://example.com).';
+    if ($values['link'] !== '' && !is_safe_public_url($values['link'])) {
+        $errors[] = 'Link must be a local path beginning with / or a full HTTP(S) URL.';
     }
 
     if (!$errors) {
-        if ($isEdit) {
-            Campus::update($id, $values);
-            header('Location: ' . $campusesAdminBase . '?updated=1');
-        } else {
-            Campus::create($values);
-            header('Location: ' . $campusesAdminBase . '?created=1');
+        try {
+            if ($isEdit) {
+                Campus::update($id, $values);
+            } else {
+                Campus::create($values);
+            }
+        } catch (Throwable $exception) {
+            $errors[] = database_write_error($exception);
         }
-        exit;
+
+        if (!$errors) {
+            header('Location: ' . $campusesAdminBase . ($isEdit ? '?updated=1' : '?created=1'));
+            exit;
+        }
     }
 }
 

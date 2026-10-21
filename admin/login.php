@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             login_admin($user);
             User::touchLastLogin((int) $user['id']);
 
-            $redirectTo = $_SESSION['redirect_after_login'] ?? ($adminBase . '/dashboard');
+            $redirectTo = safe_local_redirect($_SESSION['redirect_after_login'] ?? null, $adminBase . '/dashboard');
             unset($_SESSION['redirect_after_login']);
             header('Location: ' . $redirectTo);
             exit;
@@ -43,25 +43,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$adminAssetBase = $projectBase . '/public/assets';
+$adminAssetBase = $projectBase . '/assets';
+$adminAssetVersion = static function (string $relativePath): string {
+    $assetPath = __DIR__ . '/../public/assets/' . ltrim($relativePath, '/');
+
+    return is_file($assetPath) ? '?v=' . filemtime($assetPath) : '';
+};
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow, noarchive">
     <title><?= htmlspecialchars($pageTitle) ?></title>
-    <link rel="stylesheet" href="<?= htmlspecialchars($adminAssetBase) ?>/css/index.css">
-    <link rel="stylesheet" href="<?= htmlspecialchars($adminAssetBase) ?>/css/admin.css">
+    <link rel="stylesheet" href="<?= htmlspecialchars($adminAssetBase) ?>/css/index.css<?= $adminAssetVersion('css/index.css') ?>">
+    <link rel="stylesheet" href="<?= htmlspecialchars($adminAssetBase) ?>/css/admin.css<?= $adminAssetVersion('css/admin.css') ?>">
 </head>
 <body class="app">
 
 <div class="admin-auth">
     <section class="admin-auth__brand">
         <div class="admin-auth__logo">
-            <span class="admin-logo-badge">
-                <img src="<?= htmlspecialchars($adminAssetBase) ?>/images/icons/Busitema_University_Logo.png" alt="Busitema University">
-            </span>
+            <a class="admin-logo-badge" href="<?= htmlspecialchars($projectBase . '/') ?>" aria-label="Go to the website home page">
+                <img src="<?= htmlspecialchars($adminAssetBase) ?>/images/icons/Busitema_University_Logo.png" alt="Busitema University" width="828" height="301">
+            </a>
             <span>Internationalization &amp; Partnerships</span>
         </div>
 
@@ -121,7 +127,7 @@ $adminAssetBase = $projectBase . '/public/assets';
                 <button class="admin-auth__submit" type="submit">Sign in</button>
             </form>
 
-            <a class="admin-auth__back" href="<?= htmlspecialchars($projectBase . '/public/') ?>">
+            <a class="admin-auth__back" href="<?= htmlspecialchars($projectBase . '/') ?>">
                 <span aria-hidden="true">&larr;</span> Back to the website
             </a>
         </div>

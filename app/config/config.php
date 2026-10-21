@@ -22,6 +22,10 @@ if (!function_exists('env')) {
                     $name = trim($name);
                     $value = trim($value);
 
+                    if (strlen($value) >= 2 && (($value[0] === '"' && $value[-1] === '"') || ($value[0] === "'" && $value[-1] === "'"))) {
+                        $value = substr($value, 1, -1);
+                    }
+
                     if ($name !== '' && getenv($name) === false) {
                         putenv("$name=$value");
                     }
@@ -37,7 +41,17 @@ if (!function_exists('env')) {
     }
 }
 
+$appEnvironment = env('APP_ENV', 'production');
+$appDebug = filter_var(env('APP_DEBUG', 'false'), FILTER_VALIDATE_BOOL);
+
+date_default_timezone_set(env('APP_TIMEZONE', 'Africa/Kampala') ?: 'Africa/Kampala');
+ini_set('display_errors', $appDebug ? '1' : '0');
+ini_set('display_startup_errors', $appDebug ? '1' : '0');
+error_reporting(E_ALL);
+
 return [
+    'environment' => $appEnvironment,
+    'debug' => $appDebug,
     'db' => [
         'host' => env('DB_HOST', '127.0.0.1'),
         'port' => env('DB_PORT', '3306'),

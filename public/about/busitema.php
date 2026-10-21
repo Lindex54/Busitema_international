@@ -24,10 +24,10 @@ try {
     <section class="about-university-hero" aria-labelledby="about-university-title">
         <img
             class="about-university-hero__image"
-            src="<?= htmlspecialchars($aboutAssetBase) ?>/images/hero/hero-campus-students.png"
+            src="<?= htmlspecialchars($aboutAssetBase) ?>/images/hero/hero-campus-students.jpg"
             alt="Students walking together across a university campus"
-            width="1792"
-            height="1024"
+            width="1672"
+            height="941"
         >
         <div class="about-university-hero__overlay"></div>
         <div class="container about-university-hero__content">

@@ -18,7 +18,7 @@ try {
     <div class="hero-flow__viewport" data-hero-flow>
         <?php foreach ($heroSlides as $index => $slide): ?>
             <?php
-            $imageUrl = $heroAssetBase . '/images/hero/' . $slide['image'];
+            $imageUrl = $heroAssetBase . '/images/' . optimized_image_path('hero/' . $slide['image']);
             $isActive = $index === 0;
             ?>
             <article
@@ -33,11 +33,11 @@ try {
                 <div class="hero-flow__content">
                     <h1><?= htmlspecialchars($slide['title']) ?></h1>
                     <div class="hero-flow__actions">
-                        <a class="hero-flow__button hero-flow__button--primary" href="<?= htmlspecialchars($heroSiteBase . $slide['primary_url']) ?>">
+                        <a class="hero-flow__button hero-flow__button--primary" href="<?= htmlspecialchars(public_url($slide['primary_url'], $heroSiteBase)) ?>">
                             <?= htmlspecialchars($slide['primary_label']) ?>
                         </a>
                         <?php if (!empty($slide['secondary_label']) && !empty($slide['secondary_url'])): ?>
-                            <a class="hero-flow__button hero-flow__button--secondary" href="<?= htmlspecialchars($heroSiteBase . $slide['secondary_url']) ?>">
+                            <a class="hero-flow__button hero-flow__button--secondary" href="<?= htmlspecialchars(public_url($slide['secondary_url'], $heroSiteBase)) ?>">
                                 <?= htmlspecialchars($slide['secondary_label']) ?>
                             </a>
                         <?php endif; ?>

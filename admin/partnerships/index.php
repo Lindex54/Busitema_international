@@ -9,7 +9,7 @@ require_once __DIR__ . '/../../app/models/Partner.php';
 require_admin();
 
 $projectBase = resolve_project_base('/admin/');
-$partnersAssetBase = $projectBase . '/public/assets';
+$partnersAssetBase = $projectBase . '/assets';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'delete') {
     if (csrf_verify($_POST['csrf_token'] ?? null)) {

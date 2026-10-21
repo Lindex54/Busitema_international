@@ -93,7 +93,7 @@ $formatDate = static function (?string $date): string {
                             <?php if (!empty($featured['image'])): ?>
                                 <a class="office-news-feature__image" href="<?= htmlspecialchars($articleUrl($featured['slug'])) ?>">
                                     <img
-                                        src="<?= htmlspecialchars($newsAssetBase) ?>/images/<?= htmlspecialchars($featured['image']) ?>"
+                                        src="<?= htmlspecialchars($newsAssetBase) ?>/images/<?= htmlspecialchars(optimized_image_path($featured['image'])) ?>"
                                         alt="<?= htmlspecialchars($featured['title']) ?>"
                                         loading="lazy"
                                     >
@@ -125,7 +125,7 @@ $formatDate = static function (?string $date): string {
                                 <?php if (!empty($item['image'])): ?>
                                     <a class="office-news-card__image" href="<?= htmlspecialchars($articleUrl($item['slug'])) ?>">
                                         <img
-                                            src="<?= htmlspecialchars($newsAssetBase) ?>/images/<?= htmlspecialchars($item['image']) ?>"
+                                            src="<?= htmlspecialchars($newsAssetBase) ?>/images/<?= htmlspecialchars(optimized_image_path($item['image'])) ?>"
                                             alt="<?= htmlspecialchars($item['title']) ?>"
                                             loading="lazy"
                                         >

@@ -65,7 +65,7 @@ $seoRobots = $seoNoindex ? 'noindex, follow' : 'index, follow';
         <?= seo_json_ld($pageStructuredData) ?>
     <?php endif; ?>
 
-    <link rel="stylesheet" href="<?= htmlspecialchars($assetBase) ?>/css/tailwind.output.css">
+    <link rel="stylesheet" href="<?= htmlspecialchars($assetBase) ?>/css/tailwind.output.css<?= $assetVersion('css/tailwind.output.css') ?>">
     <link rel="stylesheet" href="<?= htmlspecialchars($assetBase) ?>/css/index.css<?= $assetVersion('css/index.css') ?>">
     <link rel="stylesheet" href="<?= htmlspecialchars($assetBase) ?>/css/main.css<?= $assetVersion('css/main.css') ?>">
     <link rel="stylesheet" href="<?= htmlspecialchars($assetBase) ?>/css/components.css<?= $assetVersion('css/components.css') ?>">

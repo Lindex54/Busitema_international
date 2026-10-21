@@ -68,7 +68,7 @@ if (!function_exists('seo_image_url')) {
             return $relativePath;
         }
 
-        return seo_base_url() . '/assets/images/' . ltrim($relativePath, '/');
+        return seo_base_url() . '/assets/images/' . optimized_image_path($relativePath);
     }
 }
 

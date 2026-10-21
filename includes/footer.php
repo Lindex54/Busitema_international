@@ -27,6 +27,9 @@ $footerPhoneHref = preg_replace('/[^0-9+]/', '', $footerOffice['office_phone']);
                 <img
                     src="<?= htmlspecialchars($assetBase ?? '/assets') ?>/images/icons/Busitema_University_Logo.png"
                     alt="Busitema University"
+                    width="828"
+                    height="301"
+                    loading="lazy"
                 >
             </a>
             <p>Connecting Busitema University with students, scholars and institutions around the world.</p>
@@ -85,8 +88,8 @@ $footerPhoneHref = preg_replace('/[^0-9+]/', '', $footerOffice['office_phone']);
         </div>
     </div>
 </footer>
-<script src="<?= htmlspecialchars($assetBase ?? '/assets') ?>/js/main.js<?= isset($assetVersion) ? $assetVersion('js/main.js') : '' ?>"></script>
-<script src="<?= htmlspecialchars($assetBase ?? '/assets') ?>/js/navigation.js<?= isset($assetVersion) ? $assetVersion('js/navigation.js') : '' ?>"></script>
-<script src="<?= htmlspecialchars($assetBase ?? '/assets') ?>/js/sliders.js<?= isset($assetVersion) ? $assetVersion('js/sliders.js') : '' ?>"></script>
+<script defer src="<?= htmlspecialchars($assetBase ?? '/assets') ?>/js/main.js<?= isset($assetVersion) ? $assetVersion('js/main.js') : '' ?>"></script>
+<script defer src="<?= htmlspecialchars($assetBase ?? '/assets') ?>/js/navigation.js<?= isset($assetVersion) ? $assetVersion('js/navigation.js') : '' ?>"></script>
+<script defer src="<?= htmlspecialchars($assetBase ?? '/assets') ?>/js/sliders.js<?= isset($assetVersion) ? $assetVersion('js/sliders.js') : '' ?>"></script>
 </body>
 </html>

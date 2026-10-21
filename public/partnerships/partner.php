@@ -42,6 +42,7 @@ if ($partner) {
         'url' => $seo['canonical'],
     ], static fn ($value) => $value !== null);
 } else {
+    http_response_code(404);
     $pageTitle = 'Partner Not Found - Busitema University';
     $pageNoindex = true;
 }
@@ -83,7 +84,7 @@ $partnerSiteBase = $siteBase ?? '';
                         <?php if ($partner['logo']): ?>
                             <img
                                 class="partner-profile__logo"
-                                src="<?= htmlspecialchars($partnerAssetBase) ?>/images/partners/<?= htmlspecialchars($partner['logo']) ?>"
+                                src="<?= htmlspecialchars($partnerAssetBase) ?>/images/<?= htmlspecialchars(optimized_image_path('partners/' . $partner['logo'])) ?>"
                                 alt="Emblem for <?= htmlspecialchars($partner['name']) ?>"
                                 width="96"
                                 height="96"

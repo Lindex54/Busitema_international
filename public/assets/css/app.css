@@ -873,7 +873,7 @@
   color: var(--busitema-white);
   background-image:
     linear-gradient(rgba(24, 28, 34, 0.78), rgba(24, 28, 34, 0.86)),
-    url("../images/hero/hero-research-opportunities.png");
+    url("../images/hero/hero-research-opportunities.jpg");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;

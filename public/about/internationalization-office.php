@@ -31,10 +31,10 @@ $officeSiteBase = $siteBase ?? '';
         </div>
         <div class="office-hero__media">
             <img
-                src="<?= htmlspecialchars($officeAssetBase) ?>/images/hero/hero-partnerships.png"
+                src="<?= htmlspecialchars($officeAssetBase) ?>/images/hero/hero-partnerships.jpg"
                 alt="University representatives meeting and shaking hands around a conference table"
-                width="1792"
-                height="1024"
+                width="1672"
+                height="941"
             >
         </div>
     </section>

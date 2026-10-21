@@ -3,6 +3,7 @@ require_once __DIR__ . '/../../app/config/config.php';
 require_once __DIR__ . '/../../app/config/database.php';
 require_once __DIR__ . '/../../app/helpers/security.php';
 require_once __DIR__ . '/../../app/helpers/url.php';
+require_once __DIR__ . '/../../app/helpers/functions.php';
 require_once __DIR__ . '/../../app/middleware/auth.php';
 require_once __DIR__ . '/../../app/models/PartnershipArea.php';
 
@@ -45,14 +46,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (!$errors) {
-        if ($isEdit) {
-            PartnershipArea::update($id, $values);
-            header('Location: ' . $areasAdminBase . '?updated=1');
-        } else {
-            PartnershipArea::create($values);
-            header('Location: ' . $areasAdminBase . '?created=1');
+        try {
+            if ($isEdit) {
+                PartnershipArea::update($id, $values);
+            } else {
+                PartnershipArea::create($values);
+            }
+        } catch (Throwable $exception) {
+            $errors[] = database_write_error($exception);
         }
-        exit;
+
+        if (!$errors) {
+            header('Location: ' . $areasAdminBase . ($isEdit ? '?updated=1' : '?created=1'));
+            exit;
+        }
     }
 }
 

@@ -1,8 +1,35 @@
 <?php
 // Session-based auth guard for admin pages.
 
+require_once __DIR__ . '/../config/config.php';
+
 if (session_status() === PHP_SESSION_NONE) {
+    $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+        || strtolower($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https';
+
+    ini_set('session.use_strict_mode', '1');
+    ini_set('session.use_only_cookies', '1');
+    session_set_cookie_params([
+        'lifetime' => 0,
+        'path' => '/',
+        'secure' => $isHttps,
+        'httponly' => true,
+        'samesite' => 'Lax',
+    ]);
     session_start();
+}
+
+if (!function_exists('safe_local_redirect')) {
+    function safe_local_redirect(?string $target, string $fallback): string
+    {
+        if (!$target || !str_starts_with($target, '/') || str_starts_with($target, '//')) {
+            return $fallback;
+        }
+
+        $parts = parse_url($target);
+
+        return isset($parts['scheme']) || isset($parts['host']) ? $fallback : $target;
+    }
 }
 
 if (!function_exists('current_admin')) {

@@ -59,13 +59,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($values['primary_url'] === '') {
         $errors[] = 'The main button link is required.';
+    } elseif (!is_safe_public_url($values['primary_url'])) {
+        $errors[] = 'The main button link must be a local path beginning with / or a full HTTP(S) URL.';
     }
 
     if (($values['secondary_label'] === '') !== ($values['secondary_url'] === '')) {
         $errors[] = 'Fill in both the second button label and link, or leave both blank.';
+    } elseif ($values['secondary_url'] !== '' && !is_safe_public_url($values['secondary_url'])) {
+        $errors[] = 'The second button link must be a local path beginning with / or a full HTTP(S) URL.';
     }
 
-    $uploadResult = store_uploaded_image($_FILES['image'] ?? [], $slideUploadDir);
+    $uploadResult = $errors
+        ? ['ok' => true, 'filename' => null]
+        : store_uploaded_image($_FILES['image'] ?? [], $slideUploadDir);
 
     if (!$uploadResult['ok']) {
         $errors[] = $uploadResult['error'];
@@ -75,27 +81,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!$errors) {
         $newImage = $uploadResult['filename'] ?? null;
+        $oldImage = $slide['image'] ?? null;
 
         if ($newImage) {
-            $oldImage = $values['image'] ?? null;
             $values['image'] = $newImage;
+        }
 
-            if ($isEdit && $oldImage && $oldImage !== $newImage) {
-                $oldPath = $slideUploadDir . '/' . $oldImage;
-                if (is_file($oldPath)) {
-                    @unlink($oldPath);
-                }
+        try {
+            if ($isEdit) {
+                HeroSlide::update($id, $values);
+            } else {
+                HeroSlide::create($values);
             }
+        } catch (Throwable $exception) {
+            if ($newImage) {
+                remove_managed_file($slideUploadDir, $newImage);
+                $values['image'] = $oldImage;
+            }
+            $errors[] = database_write_error($exception);
         }
 
-        if ($isEdit) {
-            HeroSlide::update($id, $values);
-            header('Location: ' . $slidesAdminBase . '?updated=1');
-        } else {
-            HeroSlide::create($values);
-            header('Location: ' . $slidesAdminBase . '?created=1');
+        if (!$errors) {
+            if ($newImage && $oldImage && $oldImage !== $newImage) {
+                remove_managed_file($slideUploadDir, $oldImage);
+            }
+
+            header('Location: ' . $slidesAdminBase . ($isEdit ? '?updated=1' : '?created=1'));
+            exit;
         }
-        exit;
     }
 }
 
@@ -162,7 +175,7 @@ include __DIR__ . '/../includes/header.php';
             <label for="image">Background image</label>
             <?php if (!empty($values['image'])): ?>
                 <div class="admin-field__current-photo">
-                    <img src="<?= htmlspecialchars($projectBase . '/public/assets/images/hero/' . $values['image']) ?>" alt="Current image">
+                    <img src="<?= htmlspecialchars($projectBase . '/assets/images/hero/' . $values['image']) ?>" alt="Current image">
                     <span>Current image &mdash; upload a new one to replace it</span>
                 </div>
             <?php endif; ?>

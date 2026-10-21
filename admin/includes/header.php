@@ -22,6 +22,8 @@ $adminNav = [
     ['label' => 'Contact People', 'href' => '/team/'],
     ['label' => 'News & Events', 'href' => '/news/'],
     ['label' => 'Scholarships', 'href' => '/scholarships/'],
+    ['label' => 'Manage Admins', 'href' => '/admins/'],
+    ['label' => 'Activity Logs', 'href' => '/logs/'],
     ['label' => 'Settings', 'href' => '/settings/'],
 ];
 

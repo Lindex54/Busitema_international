@@ -58,5 +58,6 @@ return [
         'name' => env('DB_NAME', 'busitema_international'),
         'user' => env('DB_USER', 'root'),
         'pass' => env('DB_PASS', ''),
+        'timezone' => env('DB_TIMEZONE', '+03:00'),
     ],
 ];

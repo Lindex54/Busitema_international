@@ -99,7 +99,7 @@ if (!function_exists('database_write_error')) {
         ));
 
         if ($exception instanceof PDOException && (string) $exception->getCode() === '23000') {
-            return 'That value is already in use. Please change the unique name or email and try again.';
+            return 'That value is already in use. Please change the unique name, username or email and try again.';
         }
 
         return 'The changes could not be saved. Please check the database connection and try again.';

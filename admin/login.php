@@ -4,6 +4,7 @@ require_once __DIR__ . '/../app/config/database.php';
 require_once __DIR__ . '/../app/helpers/security.php';
 require_once __DIR__ . '/../app/helpers/url.php';
 require_once __DIR__ . '/../app/middleware/auth.php';
+require_once __DIR__ . '/../app/models/ActivityLog.php';
 require_once __DIR__ . '/../app/models/User.php';
 
 $projectBase = resolve_project_base('/admin/');
@@ -18,19 +19,23 @@ $pageTitle = "Admin Login - Busitema University";
 $errorMessage = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $username = trim((string) ($_POST['username'] ?? ''));
+
     if (!csrf_verify($_POST['csrf_token'] ?? null)) {
+        ActivityLog::record('login_failed', 'failure', null, $username, 'Invalid or expired request token');
         $errorMessage = 'Your session expired. Please try again.';
     } elseif (login_attempts_remaining() <= 0) {
+        ActivityLog::record('login_failed', 'failure', null, $username, 'Login temporarily rate limited');
         $errorMessage = 'Too many failed attempts. Please wait a minute and try again.';
     } else {
-        $email = trim((string) ($_POST['email'] ?? ''));
         $password = (string) ($_POST['password'] ?? '');
-        $user = $email !== '' ? User::findByEmail($email) : null;
+        $user = $username !== '' ? User::findByUsername($username) : null;
 
         if ($user && password_verify($password, $user['password_hash'])) {
             clear_login_throttle();
             login_admin($user);
             User::touchLastLogin((int) $user['id']);
+            ActivityLog::record('login_success', 'success', (int) $user['id'], $user['username'], 'Administrator signed in');
 
             $redirectTo = safe_local_redirect($_SESSION['redirect_after_login'] ?? null, $adminBase . '/dashboard');
             unset($_SESSION['redirect_after_login']);
@@ -39,7 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         register_failed_login();
-        $errorMessage = 'Invalid email or password.';
+        ActivityLog::record('login_failed', 'failure', $user ? (int) $user['id'] : null, $username, 'Invalid username or password');
+        $errorMessage = 'Invalid username or password.';
     }
 }
 
@@ -99,14 +105,16 @@ $adminAssetVersion = static function (string $relativePath): string {
                 <?= csrf_field() ?>
 
                 <div class="admin-field">
-                    <label for="email">Email address</label>
+                    <label for="username">Username</label>
                     <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        placeholder="you@busitema.ac.ug"
-                        value="<?= htmlspecialchars($_POST['email'] ?? '') ?>"
+                        type="text"
+                        id="username"
+                        name="username"
+                        placeholder="Enter your username"
+                        value="<?= htmlspecialchars($_POST['username'] ?? '') ?>"
                         autocomplete="username"
+                        minlength="3"
+                        maxlength="80"
                         required
                         autofocus
                     >

@@ -29,12 +29,14 @@ No Composer runtime dependencies are required. Node.js is needed only when rebui
    Then insert the resulting hash in phpMyAdmin:
 
    ```sql
-   INSERT INTO admin_users (name, email, password_hash, role)
-   VALUES ('Site Administrator', 'admin@example.com', 'PASTE_HASH_HERE', 'admin');
+   INSERT INTO admin_users (name, username, password_hash, role)
+   VALUES ('Site Administrator', 'admin', 'PASTE_HASH_HERE', 'admin');
    ```
 
 9. Sign in at `/admin/login`, replace sample content, and verify that `/robots.txt` and `/sitemap.xml` load.
 10. Keep `APP_DEBUG=false` in production. Turn it on only temporarily in a private local environment.
+
+When upgrading a database created by an older version of the project, run the SQL files in `database/migrations/` once, in filename order. Fresh installations do not need the migrations.
 
 ## Production environment
 

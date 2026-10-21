@@ -18,6 +18,11 @@ if (!function_exists('db')) {
                 PDO::ATTR_EMULATE_PREPARES => false,
                 PDO::ATTR_TIMEOUT => 5,
             ]);
+
+            $databaseTimezone = $db['timezone'] ?? '+03:00';
+            if (preg_match('/^[+-](?:0\d|1[0-4]):[0-5]\d$/', $databaseTimezone)) {
+                $connection->exec("SET time_zone = " . $connection->quote($databaseTimezone));
+            }
         }
 
         return $connection;

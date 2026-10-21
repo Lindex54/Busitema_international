@@ -47,8 +47,9 @@ if (!function_exists('login_admin')) {
         $_SESSION['admin'] = [
             'id' => (int) $user['id'],
             'name' => $user['name'],
-            'email' => $user['email'],
+            'username' => $user['username'],
             'role' => $user['role'],
+            'previous_login_at' => $user['last_login_at'] ?? null,
         ];
     }
 }

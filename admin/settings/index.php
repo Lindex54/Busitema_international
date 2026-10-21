@@ -22,7 +22,7 @@ $fields = [
 
 $seoFields = [
     'seo_site_name' => 'Site name',
-    'seo_default_description' => 'Default meta description',
+    'seo_default_description' => 'Default description',
 ];
 
 $errors = [];
@@ -108,9 +108,9 @@ include __DIR__ . '/../includes/header.php';
             </div>
         <?php endforeach; ?>
 
-        <h2 class="admin-form-card__subheading">Search Engine Optimization (SEO)</h2>
+        <h2 class="admin-form-card__subheading">Search results &amp; sharing</h2>
         <p class="admin-field__hint">
-            These are the site-wide defaults used when a page doesn't have its own title, description or image.
+            These are used as the fallback whenever a page doesn't have its own title, description or picture.
         </p>
 
         <?php foreach ($seoFields as $key => $label): ?>
@@ -130,26 +130,26 @@ include __DIR__ . '/../includes/header.php';
         <?php endforeach; ?>
 
         <div class="admin-field">
-            <label for="seo_default_image">Default social image</label>
+            <label for="seo_default_image">Default picture for sharing</label>
             <?php if (!empty($values['seo_default_image'])): ?>
                 <div class="admin-field__current-photo">
-                    <img src="<?= htmlspecialchars($projectBase . '/public/assets/images/' . $values['seo_default_image']) ?>" alt="Current default social image">
-                    <span>Current image &mdash; upload a new one to replace it</span>
+                    <img src="<?= htmlspecialchars($projectBase . '/public/assets/images/' . $values['seo_default_image']) ?>" alt="Current default picture">
+                    <span>Current picture &mdash; upload a new one to replace it</span>
                 </div>
             <?php endif; ?>
             <input type="file" id="seo_default_image" name="seo_default_image" accept="image/jpeg,image/png,image/webp">
             <p class="admin-field__hint">
-                Optional. Used for social sharing (Facebook, X/Twitter, WhatsApp) on pages that don't have their own image. JPG, PNG or WEBP, up to 2MB.
+                Optional. Shown when a page without its own picture is shared on Facebook, X or WhatsApp. JPG, PNG or WEBP, up to 2MB.
             </p>
         </div>
 
         <div class="admin-field">
             <label class="admin-inline-checkbox">
                 <input type="checkbox" name="seo_site_indexable" value="1" <?= ($values['seo_site_indexable'] ?? '1') !== '0' ? 'checked' : '' ?>>
-                Allow search engines to index this website
+                Show this website on Google and other search engines
             </label>
             <p class="admin-field__hint">
-                Turn this off while the site is still in development or not ready to be found publicly &mdash; it hides every page from Google and other search engines regardless of any per-page setting.
+                Turn this off while the site is still being built or isn't ready to be found publicly &mdash; it hides every page from search engines, regardless of any individual page's own setting.
             </p>
         </div>
 

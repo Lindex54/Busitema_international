@@ -12,6 +12,7 @@ $pageHeading = "Dashboard";
 $activeNav = '/dashboard';
 
 $contentModules = [
+    ['title' => 'Hero Slides', 'description' => 'Manage the rotating banner at the top of the homepage.', 'status' => 'Live'],
     ['title' => 'Campuses', 'description' => 'Manage campus cards on the About Busitema page.', 'status' => 'Live'],
     ['title' => 'Partners', 'description' => 'Manage partner institutions, regions and logos.', 'status' => 'Live'],
     ['title' => 'Partnership Areas', 'description' => 'Manage the ways Busitema collaborates with partners.', 'status' => 'Live'],

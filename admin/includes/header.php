@@ -10,6 +10,7 @@ $adminAssetBase = $adminProjectBase . '/public/assets';
 
 $adminNav = [
     ['label' => 'Dashboard', 'href' => '/dashboard'],
+    ['label' => 'Hero Slides', 'href' => '/hero-slides/'],
     ['label' => 'Campuses', 'href' => '/campuses/'],
     ['label' => 'Partners', 'href' => '/partnerships/'],
     ['label' => 'Partnership Areas', 'href' => '/partnership-areas/'],

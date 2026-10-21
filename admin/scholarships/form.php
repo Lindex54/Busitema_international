@@ -4,7 +4,6 @@ require_once __DIR__ . '/../../app/config/database.php';
 require_once __DIR__ . '/../../app/helpers/security.php';
 require_once __DIR__ . '/../../app/helpers/url.php';
 require_once __DIR__ . '/../../app/helpers/functions.php';
-require_once __DIR__ . '/../../app/helpers/seo.php';
 require_once __DIR__ . '/../../app/middleware/auth.php';
 require_once __DIR__ . '/../../app/models/Opportunity.php';
 
@@ -12,7 +11,6 @@ require_admin();
 
 $projectBase = resolve_project_base('/admin/');
 $opportunitiesAdminBase = $projectBase . '/admin/scholarships/';
-$opportunitySeoUploadDir = __DIR__ . '/../../public/assets/images/opportunities';
 
 $id = isset($_GET['id']) ? (int) $_GET['id'] : null;
 $opportunity = $id ? Opportunity::find($id) : null;
@@ -55,9 +53,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $values['eligibility'] = trim((string) ($_POST['eligibility'] ?? ''));
     $values['how_to_apply'] = trim((string) ($_POST['how_to_apply'] ?? ''));
     $values['sort_order'] = max(0, (int) ($_POST['sort_order'] ?? 0));
-    $values['seo_title'] = trim((string) ($_POST['seo_title'] ?? ''));
-    $values['seo_description'] = trim((string) ($_POST['seo_description'] ?? ''));
-    $values['is_indexed'] = isset($_POST['is_indexed']) ? 1 : 0;
 
     if ($values['title'] === '') {
         $errors[] = 'Title is required.';
@@ -79,29 +74,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = 'Overview is required.';
     }
 
-    // SEO image override is optional - this module has no other image field.
-    $seoUploadResult = store_uploaded_image($_FILES['seo_image'] ?? [], $opportunitySeoUploadDir);
-
-    if (!$seoUploadResult['ok']) {
-        $errors[] = $seoUploadResult['error'];
-    }
-
     if (!$errors) {
         $values['slug'] = Opportunity::uniqueSlug($values['title'], $isEdit ? $id : null);
-
-        $newSeoImage = $seoUploadResult['filename'] ?? null;
-
-        if ($newSeoImage) {
-            $oldSeoImage = $values['seo_image'] ?? null;
-            $values['seo_image'] = 'opportunities/' . $newSeoImage;
-
-            if ($isEdit && $oldSeoImage && $oldSeoImage !== $values['seo_image']) {
-                $oldPath = __DIR__ . '/../../public/assets/images/' . $oldSeoImage;
-                if (is_file($oldPath)) {
-                    @unlink($oldPath);
-                }
-            }
-        }
 
         if ($isEdit) {
             Opportunity::update($id, $values);
@@ -192,20 +166,6 @@ include __DIR__ . '/../includes/header.php';
             <label for="sort_order">Display order</label>
             <input type="number" id="sort_order" name="sort_order" min="0" value="<?= (int) $values['sort_order'] ?>">
         </div>
-
-        <?php
-        $seoValues = $values;
-        $seoValues['seo_image_preview_url'] = !empty($values['seo_image'])
-            ? $projectBase . '/public/assets/images/' . $values['seo_image']
-            : null;
-        $seoAutoTitle = $values['title'] !== '' ? $values['title'] . ' - Busitema University' : '';
-        $seoAutoDescription = $values['summary'] ?? '';
-        $seoAutoImageUrl = null;
-        $seoPreviewUrl = seo_absolute_url('/study/scholarship?slug=' . ($values['slug'] ?? Opportunity::uniqueSlug($values['title'] ?: 'new-opportunity', $isEdit ? $id : null)));
-        $seoImageInputLabel = 'Social image';
-        $seoImageHint = 'This module has no other image field, so add one here if you want a picture to appear when this is shared on social media.';
-        include __DIR__ . '/../includes/seo-fields.php';
-        ?>
 
         <div class="admin-form-actions">
             <button class="admin-btn" type="submit"><?= $isEdit ? 'Save changes' : 'Add opportunity' ?></button>

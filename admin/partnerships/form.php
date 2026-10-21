@@ -4,7 +4,6 @@ require_once __DIR__ . '/../../app/config/database.php';
 require_once __DIR__ . '/../../app/helpers/security.php';
 require_once __DIR__ . '/../../app/helpers/url.php';
 require_once __DIR__ . '/../../app/helpers/functions.php';
-require_once __DIR__ . '/../../app/helpers/seo.php';
 require_once __DIR__ . '/../../app/middleware/auth.php';
 require_once __DIR__ . '/../../app/models/Partner.php';
 
@@ -13,7 +12,6 @@ require_admin();
 $projectBase = resolve_project_base('/admin/');
 $partnersAdminBase = $projectBase . '/admin/partnerships/';
 $partnerUploadDir = __DIR__ . '/../../public/assets/images/partners';
-$partnerSeoUploadDir = __DIR__ . '/../../public/assets/images/partners';
 
 $id = isset($_GET['id']) ? (int) $_GET['id'] : null;
 $partner = $id ? Partner::find($id) : null;
@@ -48,9 +46,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $values['country'] = trim((string) ($_POST['country'] ?? ''));
     $values['about'] = trim((string) ($_POST['about'] ?? ''));
     $values['sort_order'] = max(0, (int) ($_POST['sort_order'] ?? 0));
-    $values['seo_title'] = trim((string) ($_POST['seo_title'] ?? ''));
-    $values['seo_description'] = trim((string) ($_POST['seo_description'] ?? ''));
-    $values['is_indexed'] = isset($_POST['is_indexed']) ? 1 : 0;
 
     if ($values['name'] === '') {
         $errors[] = 'Name is required.';
@@ -75,13 +70,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = $uploadResult['error'];
     }
 
-    // SEO image override is also optional.
-    $seoUploadResult = store_uploaded_image($_FILES['seo_image'] ?? [], $partnerSeoUploadDir);
-
-    if (!$seoUploadResult['ok']) {
-        $errors[] = $seoUploadResult['error'];
-    }
-
     if (!$errors) {
         $values['slug'] = Partner::uniqueSlug($values['name'], $isEdit ? $id : null);
 
@@ -93,20 +81,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if ($isEdit && $oldLogo && $oldLogo !== $newLogo) {
                 $oldPath = $partnerUploadDir . '/' . $oldLogo;
-                if (is_file($oldPath)) {
-                    @unlink($oldPath);
-                }
-            }
-        }
-
-        $newSeoImage = $seoUploadResult['filename'] ?? null;
-
-        if ($newSeoImage) {
-            $oldSeoImage = $values['seo_image'] ?? null;
-            $values['seo_image'] = 'partners/' . $newSeoImage;
-
-            if ($isEdit && $oldSeoImage && $oldSeoImage !== $values['seo_image']) {
-                $oldPath = __DIR__ . '/../../public/assets/images/' . $oldSeoImage;
                 if (is_file($oldPath)) {
                     @unlink($oldPath);
                 }
@@ -186,20 +160,6 @@ include __DIR__ . '/../includes/header.php';
             <input type="file" id="logo" name="logo" accept="image/jpeg,image/png,image/webp">
             <p class="admin-field__hint">Optional. JPG, PNG or WEBP, up to 2MB. Leave blank if you don't have one yet &mdash; no placeholder image will be shown.</p>
         </div>
-
-        <?php
-        $seoValues = $values;
-        $seoValues['seo_image_preview_url'] = !empty($values['seo_image'])
-            ? $projectBase . '/public/assets/images/' . $values['seo_image']
-            : null;
-        $seoAutoTitle = $values['name'] !== '' ? $values['name'] . ' - Busitema University Partners' : '';
-        $seoAutoDescription = $values['about'] ?? '';
-        $seoAutoImageUrl = !empty($values['logo']) ? seo_image_url('partners/' . $values['logo']) : null;
-        $seoPreviewUrl = seo_absolute_url('/partnerships/partner?slug=' . ($values['slug'] ?? Partner::uniqueSlug($values['name'] ?: 'new-partner', $isEdit ? $id : null)));
-        $seoImageInputLabel = 'Social image override';
-        $seoImageHint = 'Optional. Only needed if you want a different image than the logo above when this partner is shared on social media.';
-        include __DIR__ . '/../includes/seo-fields.php';
-        ?>
 
         <div class="admin-form-actions">
             <button class="admin-btn" type="submit"><?= $isEdit ? 'Save changes' : 'Add partner' ?></button>

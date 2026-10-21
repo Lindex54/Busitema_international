@@ -4,7 +4,6 @@ require_once __DIR__ . '/../../app/config/database.php';
 require_once __DIR__ . '/../../app/helpers/security.php';
 require_once __DIR__ . '/../../app/helpers/url.php';
 require_once __DIR__ . '/../../app/helpers/functions.php';
-require_once __DIR__ . '/../../app/helpers/seo.php';
 require_once __DIR__ . '/../../app/middleware/auth.php';
 require_once __DIR__ . '/../../app/models/News.php';
 
@@ -13,7 +12,6 @@ require_admin();
 $projectBase = resolve_project_base('/admin/');
 $newsAdminBase = $projectBase . '/admin/news/';
 $newsUploadDir = __DIR__ . '/../../public/assets/images/news';
-$newsSeoUploadDir = __DIR__ . '/../../public/assets/images/news';
 
 $id = isset($_GET['id']) ? (int) $_GET['id'] : null;
 $item = $id ? News::find($id) : null;
@@ -57,9 +55,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $values['published_at'] = trim((string) ($_POST['published_at'] ?? ''));
     $values['is_featured'] = isset($_POST['is_featured']) ? 1 : 0;
     $values['sort_order'] = max(0, (int) ($_POST['sort_order'] ?? 0));
-    $values['seo_title'] = trim((string) ($_POST['seo_title'] ?? ''));
-    $values['seo_description'] = trim((string) ($_POST['seo_description'] ?? ''));
-    $values['is_indexed'] = isset($_POST['is_indexed']) ? 1 : 0;
 
     if ($values['title'] === '') {
         $errors[] = 'Title is required.';
@@ -88,13 +83,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = $uploadResult['error'];
     }
 
-    // SEO image override is also optional.
-    $seoUploadResult = store_uploaded_image($_FILES['seo_image'] ?? [], $newsSeoUploadDir);
-
-    if (!$seoUploadResult['ok']) {
-        $errors[] = $seoUploadResult['error'];
-    }
-
     if (!$errors) {
         $values['slug'] = News::uniqueSlug($values['title'], $isEdit ? $id : null);
 
@@ -106,20 +94,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if ($isEdit && $oldImage && $oldImage !== $values['image']) {
                 $oldPath = __DIR__ . '/../../public/assets/images/' . $oldImage;
-                if (is_file($oldPath)) {
-                    @unlink($oldPath);
-                }
-            }
-        }
-
-        $newSeoImage = $seoUploadResult['filename'] ?? null;
-
-        if ($newSeoImage) {
-            $oldSeoImage = $values['seo_image'] ?? null;
-            $values['seo_image'] = 'news/' . $newSeoImage;
-
-            if ($isEdit && $oldSeoImage && $oldSeoImage !== $values['seo_image']) {
-                $oldPath = __DIR__ . '/../../public/assets/images/' . $oldSeoImage;
                 if (is_file($oldPath)) {
                     @unlink($oldPath);
                 }
@@ -221,20 +195,6 @@ include __DIR__ . '/../includes/header.php';
             <label for="sort_order">Display order</label>
             <input type="number" id="sort_order" name="sort_order" min="0" value="<?= (int) $values['sort_order'] ?>">
         </div>
-
-        <?php
-        $seoValues = $values;
-        $seoValues['seo_image_preview_url'] = !empty($values['seo_image'])
-            ? $projectBase . '/public/assets/images/' . $values['seo_image']
-            : null;
-        $seoAutoTitle = $values['title'] !== '' ? $values['title'] . ' - Busitema University' : '';
-        $seoAutoDescription = $values['summary'] ?? '';
-        $seoAutoImageUrl = !empty($values['image']) ? seo_image_url($values['image']) : null;
-        $seoPreviewUrl = seo_absolute_url('/news/article?slug=' . ($values['slug'] ?? News::uniqueSlug($values['title'] ?: 'new-item', $isEdit ? $id : null)));
-        $seoImageInputLabel = 'Social image override';
-        $seoImageHint = 'Optional. Only needed if you want a different image than the one above when this is shared on social media.';
-        include __DIR__ . '/../includes/seo-fields.php';
-        ?>
 
         <div class="admin-form-actions">
             <button class="admin-btn" type="submit"><?= $isEdit ? 'Save changes' : 'Add item' ?></button>
